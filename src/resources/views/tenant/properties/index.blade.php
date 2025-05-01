@@ -22,11 +22,11 @@
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link">
-            <i class="fas fa-user-circle"></i>
-            <span>Profile</span>
-        </a>
-    </li>
+          <a href="{{ route('tenant.profile') }}" class="nav-link {{ Request::routeIs('tenant.profile') ? 'active' : '' }}">
+        <i class="fas fa-user-circle"></i>
+        <span>Profile</span>
+          </a>    
+        </li>
 @endsection
 
 @section('content')
@@ -187,11 +187,11 @@
         cursor: pointer;
         transition: all 0.3s ease;
         z-index: 2;
-        opacity: 0;          /* Start hidden */
+        opacity: 0;         
     }
 
     .property-card:hover .inquiry-btn {
-        opacity: 1;          /* Show on card hover */
+        opacity: 1;     
     }
 
     .inquiry-btn:hover {

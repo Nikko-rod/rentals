@@ -80,10 +80,10 @@
         </li>
      
         <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="fas fa-user-circle"></i>
-                <span>Profile</span>
-            </a>
+          <a href="{{ route('tenant.profile') }}" class="nav-link {{ Request::routeIs('tenant.profile') ? 'active' : '' }}">
+        <i class="fas fa-user-circle"></i>
+        <span>Profile</span>
+          </a>    
         </li>
 @endsection
 

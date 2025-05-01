@@ -80,6 +80,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::patch('/landlord/profile', [LandlordProfileController::class, 'update'])
                  ->name('landlord.profile.update');
          
+       
     Route::get('/properties', [PropertyController::class, 'index'])
     ->name('landlord.properties.index');
     
