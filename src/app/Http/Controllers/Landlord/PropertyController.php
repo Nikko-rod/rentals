@@ -11,16 +11,39 @@ use Illuminate\Support\Facades\DB;
 class PropertyController extends Controller
 {
     public function index(Request $request)
-{
-    $query = Property::with(['user', 'images'])->latest();
+    {
+        $query = Property::with(['user', 'images']);
+        
+        // Apply owner filter
+        if ($request->get('filter') === 'own') {
+            $query->where('user_id', auth()->id());
+        }
+
     
-    if ($request->get('filter') === 'own') {
-        $query->where('user_id', auth()->id());
+        // Apply type filter
+        if ($type = $request->get('type')) {
+            $query->where('type', $type);
+        }
+    
+        // Apply available_for filter
+        if ($availableFor = $request->get('available_for')) {
+            $query->where('available_for', $availableFor);
+        }
+    
+        if ($sort = $request->get('sort')) {
+            if ($sort === 'highest') {
+                $query->orderBy('monthly_rent', 'desc');
+            } elseif ($sort === 'lowest') {
+                $query->orderBy('monthly_rent', 'asc');
+            }
+        } else {
+            
+            $query->latest();
+        }
+        
+        $properties = $query->paginate(10)->withQueryString();
+        return view('landlord.properties.index', compact('properties'));
     }
-    
-    $properties = $query->paginate(10);
-    return view('landlord.properties.index', compact('properties'));
-}
 
     public function create()
     {

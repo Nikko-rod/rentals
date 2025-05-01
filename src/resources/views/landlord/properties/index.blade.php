@@ -31,26 +31,72 @@
 
 @section('content')
     <div class="content-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <div style="display: flex; align-items: center; gap: 1rem;">
-                <h1 style="font-size: 1.5rem; font-weight: 600;">Properties</h1>
-                <div style="display: flex; gap: 0.5rem; background: var(--secondary); padding: 0.25rem; border-radius: 0.5rem;">
-                    <a href="{{ route('landlord.properties.index') }}" 
-                       style="padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; {{ !request()->has('filter') ? 'background: var(--primary); color: var(--white);' : 'color: var(--text-dark);' }}">
-                        All Listings
-                    </a>
-                    <a href="{{ route('landlord.properties.index', ['filter' => 'own']) }}" 
-                       style="padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; {{ request()->get('filter') === 'own' ? 'background: var(--primary); color: var(--white);' : 'color: var(--text-dark);' }}">
-                        My Properties
-                    </a>
-                </div>
-            </div>
-            <a href="{{ route('landlord.properties.create') }}" 
-               style="background: var(--primary); color: var(--white); padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease;">
-                <i class="fas fa-plus"></i>
-                <span>Add Property</span>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+       
+        <div style="display: flex; gap: 0.5rem; background: var(--secondary); padding: 0.25rem; border-radius: 0.5rem;">
+            <a href="{{ route('landlord.properties.index') }}" 
+               style="padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; {{ !request()->has('filter') ? 'background: var(--primary); color: var(--white);' : 'color: var(--text-dark);' }}">
+                All Listings
+            </a>
+            <a href="{{ route('landlord.properties.index', ['filter' => 'own']) }}" 
+               style="padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none; {{ request()->get('filter') === 'own' ? 'background: var(--primary); color: var(--white);' : 'color: var(--text-dark);' }}">
+                My Properties
             </a>
         </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <form action="{{ route('landlord.properties.index') }}" method="GET" style="display: flex; gap: 1rem;">
+            <!-- Preserve existing filter if any -->
+            @if(request()->has('filter'))
+                <input type="hidden" name="filter" value="{{ request('filter') }}">
+            @endif
+
+
+            <!-- Property Type Filter -->
+            <select name="type" 
+                    style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem;">
+                <option value="">All Types</option>
+                <option value="bedspace" {{ request('type') == 'bedspace' ? 'selected' : '' }}>Bedspace</option>
+                <option value="room" {{ request('type') == 'room' ? 'selected' : '' }}>Room</option>
+                <option value="apartment" {{ request('type') == 'apartment' ? 'selected' : '' }}>Apartment</option>
+                <option value="house" {{ request('type') == 'house' ? 'selected' : '' }}>House</option>
+            </select>
+
+            <!-- Available For Filter -->
+            <select name="available_for" 
+                    style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem;">
+                <option value="">Available For</option>
+                <option value="male" {{ request('available_for') == 'male' ? 'selected' : '' }}>Male Only</option>
+                <option value="female" {{ request('available_for') == 'female' ? 'selected' : '' }}>Female Only</option>
+                <option value="couples" {{ request('available_for') == 'couples' ? 'selected' : '' }}>Couples</option>
+                <option value="any" {{ request('available_for') == 'any' ? 'selected' : '' }}>Any</option>
+            </select>
+
+            <!-- Sort By Price -->
+            <select name="sort" 
+                    style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem;">
+                <option value="">Sort By Price</option>
+                <option value="highest" {{ request('sort') == 'highest' ? 'selected' : '' }}>Highest to Lowest</option>
+                <option value="lowest" {{ request('sort') == 'lowest' ? 'selected' : '' }}>Lowest to Highest</option>
+            </select>
+
+            <button type="submit" 
+                    style="background: var(--primary); color: var(--white); padding: 0.75rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+
+        <a href="{{ route('landlord.properties.create') }}" 
+   style="background: var(--primary); width: 40px; height: 40px; border-radius: 50%; text-decoration: none; display: flex; align-items: center; justify-content: center; color: var(--white);" 
+   title="Add Property">
+    <i class="fas fa-plus"></i>
+</a>
+        </a>
+    </div>
+</div>
 
         @if($properties->count() > 0)
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
@@ -70,7 +116,9 @@
                         </div>
 
                         <div style="padding: 1rem;">
-                            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">{{ $property->title }}</h3>
+                        <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;" title="{{ $property->title }}">
+    {{ \Illuminate\Support\Str::limit($property->title, 25, '...') }}
+</h3>
                             <p style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">₱{{ number_format($property->monthly_rent, 2) }}/month</p>
                             
                             <!-- Property Details -->
@@ -122,7 +170,6 @@
                     </div>
                 @endforeach
             </div>
-
             <div style="margin-top: 2rem;">
                 {{ $properties->links() }}
             </div>

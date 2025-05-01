@@ -9,6 +9,7 @@
         :root {
             --primary: #14532d;
             --primary-light: #166534;
+            --primary-dark:rgb(16, 67, 37);
             --secondary: #f8fafc;
             --danger: #dc2626;
             --danger-light: #fee2e2;

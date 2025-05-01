@@ -59,9 +59,6 @@
 @endsection
 
 @section('sidebar')
-<div class="nav-group">
-    <h3 class="nav-group-title">Main Menu</h3>
-    <ul>
         <li class="nav-item">
             <a href="{{ route('tenant.dashboard') }}" class="nav-link active">
                 <i class="fas fa-home"></i>
@@ -69,27 +66,16 @@
             </a>
         </li>
         <li class="nav-item">
-        <a href="{{ route('landlord.properties.index') }}" class="nav-link">
+        <a href="{{ route('tenant.properties.index') }}" class="nav-link">
                 <i class="fas fa-search"></i>
                 <span>Browse Properties</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="fas fa-heart"></i>
-                <span>Saved Properties</span>
-            </a>
-        </li>
-    </ul>
-</div>
 
-<div class="nav-group">
-    <h3 class="nav-group-title">Account</h3>
-    <ul>
         <li class="nav-item">
             <a href="#" class="nav-link">
                 <i class="fas fa-message"></i>
-                <span>Messages</span>
+                <span>Inquiries</span>
             </a>
         </li>
      
@@ -99,8 +85,6 @@
                 <span>Profile</span>
             </a>
         </li>
-    </ul>
-</div>
 @endsection
 
 @section('content')
