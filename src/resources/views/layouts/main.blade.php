@@ -2,189 +2,332 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Rentals Tacloban')</title>
-    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --black: #000;
-            --white: #fff;
-            --green: #14532d;
-            --green-hover: #1f6b3d;
-            --light-green: #4CAF50;
+            --primary: #14532d;
+            --primary-hover: #1a6d3c;
+            --secondary: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --error: #dc2626;
+            --success: #16a34a;
+            --warning: #ca8a04;
+            --info: #0891b2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--white);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--black);
-            margin: 0;
-            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            line-height: 1.5;
         }
 
-        /* Header */
         .header {
-            background-color: var(--green);
-            color: var(--white);
-            padding: 20px 0;
+            background-color: var(--white);
+            padding: 1.25rem 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: fixed;
             width: 100%;
-            border-bottom: 3px solid var(--green-hover);
+            top: 0;
+            z-index: 1000;
         }
 
         .header-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 40px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
+            align-items: center;
         }
 
-        .header h1 {
-            font-size: 1.8rem;
-            margin: 0;
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -0.5px;
         }
 
         .header-nav {
             display: flex;
+            gap: 1.5rem;
             align-items: center;
         }
 
-        .header-nav a {
-            color: var(--white);
+        .nav-link {
+            color: var(--text-dark);
             text-decoration: none;
-            margin-left: 20px;
             font-weight: 500;
-            transition: color 0.2s ease-in-out;
+            transition: all 0.2s;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
         }
 
-        .header-nav a:hover {
-            color: var(--green-hover);
+        .nav-link:hover {
+            color: var(--primary);
+            background-color: var(--secondary);
         }
 
-        /* Sign Up Dropdown */
-        .signup-dropdown {
-            position: relative;
+        .main-content {
+            padding-top: 5rem;
+            min-height: calc(100vh - 5rem);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background-color: #dcfce7;
+            color: var(--success);
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: var(--error);
+        }
+
+        .alert-warning {
+            background-color: #fef3c7;
+            color: var(--warning);
+        }
+
+        .alert-info {
+            background-color: #e0f2fe;
+            color: var(--info);
+        }
+
+        .btn {
             display: inline-block;
-        }
-
-        .signup-options {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: var(--green);
-            padding: 10px;
-            border-radius: 6px;
-            animation: fadeIn 0.3s ease-in-out;
-            width: 180px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .signup-options a {
-            display: block;
-            color: var(--white);
-            padding: 8px 10px;
-            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
             font-weight: 500;
-            transition: background-color 0.2s ease-in-out;
-        }
-
-        .signup-options a:hover {
-           
-        }
-
-        .signup-dropdown:hover .signup-options {
-            display: block;
-        }
-
-        .form-container {
-            max-width: 500px;
-            margin: 60px auto;
-            padding: 30px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        h2 {
-            text-align: center;
-            color: var(--green);
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: 600;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        button {
-            background-color: var(--green);
-            color: var(--white);
-            padding: 10px 20px;
+            text-decoration: none;
+            transition: all 0.3s;
             border: none;
-            border-radius: 6px;
-            margin-top: 20px;
-            width: 100%;
-            font-weight: bold;
             cursor: pointer;
         }
 
-        button:hover {
-            background-color: var(--green-hover);
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
         }
 
-        .success {
-            background-color: var(--light-green);
-            color: white;
-            padding: 10px;
-            margin-top: 10px;
-            text-align: center;
-            border-radius: 6px;
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
         }
 
-        .error {
-            color: red;
-            font-size: 0.9rem;
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: var(--primary);
         }
 
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .header-nav {
+                gap: 1rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .signup-dropdown {
+        position: relative;
+    }
+
+    .signup-options {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        right: 0;
+        background: var(--white);
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        padding: 0.75rem;
+        min-width: 180px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .signup-dropdown:hover .signup-options {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .signup-options a {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+        border-radius: 0.5rem;
+        white-space: nowrap;
+    }
+
+    .signup-options a:hover {
+        background-color: var(--secondary);
+        color: var(--primary);
+    }
+
+    .signup-options a i {
+        margin-right: 0.5rem;
+        width: 1.25rem;
+    }
+
+    .signup-dropdown .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .signup-dropdown .nav-link i {
+        transition: transform 0.2s;
+    }
+
+    .signup-dropdown:hover .nav-link i {
+        transform: rotate(180deg);
+    }
+    /* Toast Styles */
+.toast {
+    position: fixed;
+    top: 2rem;
+    right: -100%;
+    background: var(--white);
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    transition: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+    z-index: 1001;
+}
+
+.toast.success {
+    border-left: 4px solid var(--success);
+}
+
+.toast.success .toast-content {
+    color: var(--success);
+}
+
+.toast.success .toast-content i {
+    color: var(--success);
+}
+
+.toast.error {
+    border-left: 4px solid var(--error);
+}
+
+.toast.error .toast-content {
+    color: var(--error);
+}
+
+.toast.error .toast-content i {
+    color: var(--error);
+}
+
+.toast.show {
+    right: 2rem;
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.toast-content i {
+    font-size: 1.25rem;
+}
     </style>
+    @yield('styles')
 </head>
 <body>
-
-    <!-- HEADER -->
+@include('partials.toast')
     <header class="header">
         <div class="header-content">
-            <h1>Rentals Tacloban</h1>
+            <a href="{{ route('home') }}" class="logo">Rentals Tacloban</a>
             <nav class="header-nav">
-                <div class="signup-dropdown">
-                    <a href="#">Sign Up</a>
-                    <div class="signup-options">
-                        <a href="{{ url('/register/tenant') }}">As Tenant</a>
-                        <a href="{{ url('/register/landlord') }}">As Landlord</a>
+                @guest
+                    <div class="signup-dropdown">
+                        <a href="#" class="nav-link">Register <i class="fas fa-chevron-down"></i></a>
+                        <div class="signup-options">
+                            <a href="{{ url('/register/tenant') }}"><i class="fas fa-user"></i> As Tenant</a>
+                            <a href="{{ url('/register/landlord') }}"><i class="fas fa-home"></i> As Landlord</a>
+                        </div>
                     </div>
-                </div>
-                <a href="{{ route('login') }}">Login</a>
+                    <a href="{{ route('login') }}" class="nav-link">Login <i class="fas fa-sign-in-alt"></i></a>
+                @else
+                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="nav-link" style="background: none; border: none;">
+                            Logout <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </form>
+                @endguest
             </nav>
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
-    <main>
+    <main class="main-content">
+       
+
         @yield('content')
     </main>
 
+    @yield('scripts')
+    <script>
+    if (document.querySelector('.toast.show')) {
+        setTimeout(() => {
+            document.querySelector('.toast.show').style.right = '-100%';
+        }, 5000);
+    }
+</script>
 </body>
 </html>

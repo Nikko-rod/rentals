@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Forgot Password | Admin Panel')
+@section('title', 'Reset Password | Rentals Tacloban')
 
 @section('styles')
 <style>
@@ -79,17 +79,24 @@
         border-radius: 0.5rem;
         font-weight: 500;
         font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
-        cursor: pointer;
-        transition: all 0.2s;
     }
 
     .reset-btn:hover {
         background: var(--primary-hover);
         transform: translateY(-1px);
+    }
+
+    .error {
+        color: var(--error);
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+        display: block;
     }
 
     .back-to-login {
@@ -110,47 +117,88 @@
     .back-to-login a:hover {
         text-decoration: underline;
     }
+    .email-display {
+        background: var(--secondary);
+        padding: 0.75rem 1rem;
+        padding-left: 2.5rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .email-display i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-light);
+    }
+
 </style>
 @endsection
 
 @section('content')
 
 <div class="reset-container">
-    <form method="POST" action="{{ route('admin.password.email') }}" class="reset-form">
+    <form method="POST" action="{{ route('password.update') }}" class="reset-form">
         @csrf
-        
-        <h2>Admin Password Reset</h2>
+        <input type="hidden" name="token" value="{{ $token }}">
+        <input type="hidden" name="email" value="{{ $email }}">
+
+        <h2>Reset Password</h2>
+
+        <div class="email-display">
+            <i class="fas fa-envelope"></i>
+            {{ $email }}
+        </div>
 
         <div class="input-group">
-            <label for="email">Email Address</label>
+            <label for="password">New Password</label>
             <div class="input-field">
                 <input 
-                    type="email" 
-                    name="email" 
-                    id="email" 
-                    placeholder="Enter your admin email"
-                    value="{{ old('email') }}"
-                    required 
+                    type="password" 
+                    id="password"
+                    name="password" 
+                    placeholder="Enter new password"
+                    required
                     autofocus
                 >
-                <i class="fas fa-envelope"></i>
+                <i class="fas fa-lock"></i>
             </div>
-            @error('email')
+            @error('password')
                 <span class="error">{{ $message }}</span>
             @enderror
         </div>
 
+        <div class="input-group">
+            <label for="password_confirmation">Confirm Password</label>
+            <div class="input-field">
+                <input 
+                    type="password" 
+                    id="password_confirmation"
+                    name="password_confirmation" 
+                    placeholder="Confirm new password"
+                    required
+                >
+                <i class="fas fa-lock"></i>
+            </div>
+        </div>
+
         <button type="submit" class="reset-btn">
-            <i class="fas fa-paper-plane"></i>
-            Send Password Reset Link
+            <i class="fas fa-key"></i>
+            Reset Password
         </button>
 
         <div class="back-to-login">
-            <a href="{{ route('admin.login') }}">
+            <a href="{{ route('login') }}">
                 <i class="fas fa-arrow-left"></i>
-                Back to Admin Login
+                Back to Login
             </a>
         </div>
     </form>
 </div>
+
+@section('scripts')
 @endsection

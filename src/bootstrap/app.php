@@ -20,10 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'is_admin' => IsAdmin::class,
             'role' => RoleMiddleware::class,
+            'landlord' => \App\Http\Middleware\Landlord::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // Custom exception handling can be configured here
+        
     })
     ->create();
 

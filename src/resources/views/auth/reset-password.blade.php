@@ -1,16 +1,15 @@
 @extends('layouts.main')
 
-@section('title', 'Forgot Password | Admin Panel')
+@section('title', 'Reset Password | Rentals Tacloban')
 
 @section('styles')
 <style>
     .reset-container {
-        min-height: calc(100vh - 4rem);
+        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 2rem;
-        margin-top: 4rem;
     }
 
     .reset-form {
@@ -77,8 +76,8 @@
         color: var(--white);
         border: none;
         border-radius: 0.5rem;
-        font-weight: 500;
         font-size: 0.875rem;
+        font-weight: 500;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -89,7 +88,12 @@
 
     .reset-btn:hover {
         background: var(--primary-hover);
-        transform: translateY(-1px);
+    }
+
+    .error {
+        color: var(--error);
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
     }
 
     .back-to-login {
@@ -102,9 +106,6 @@
         text-decoration: none;
         font-size: 0.875rem;
         font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
     }
 
     .back-to-login a:hover {
@@ -114,29 +115,25 @@
 @endsection
 
 @section('content')
-
 <div class="reset-container">
-    <form method="POST" action="{{ route('admin.password.email') }}" class="reset-form">
+    <form method="POST" action="{{ route('password.email') }}" class="reset-form">
         @csrf
-        
-        <h2>Admin Password Reset</h2>
 
+        <h2>Reset Password</h2>
         <div class="input-group">
             <label for="email">Email Address</label>
             <div class="input-field">
-                <input 
-                    type="email" 
-                    name="email" 
-                    id="email" 
-                    placeholder="Enter your admin email"
-                    value="{{ old('email') }}"
-                    required 
-                    autofocus
-                >
+                <input type="email" 
+                       name="email" 
+                       id="email" 
+                       placeholder="Enter your email"
+                       value="{{ old('email') }}"
+                       required 
+                       autofocus>
                 <i class="fas fa-envelope"></i>
             </div>
             @error('email')
-                <span class="error">{{ $message }}</span>
+                <div class="error">{{ $message }}</div>
             @enderror
         </div>
 
@@ -146,9 +143,8 @@
         </button>
 
         <div class="back-to-login">
-            <a href="{{ route('admin.login') }}">
-                <i class="fas fa-arrow-left"></i>
-                Back to Admin Login
+            <a href="{{ route('login') }}">
+                <i class="fas fa-arrow-left"></i> Back to Login
             </a>
         </div>
     </form>

@@ -1,37 +1,46 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-use App\Http\Controllers\Controller; 
+
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
     public function login(Request $request)
     {
-        // Validate the credentials
-        $request->validate([
+        // Add debugging
+        \Log::info('Login attempt started', ['email' => $request->email]);
+
+        // Validate the form data
+        $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:8',
+            'password' => 'required',
         ]);
 
-        // Attempt to log the user in
-        if (Auth::attempt($request->only('email', 'password'))) {
+        // Try to authenticate
+        if (Auth::attempt($credentials)) {
+            \Log::info('Authentication successful', ['user' => Auth::id()]);
+            
+            $request->session()->regenerate();
             $user = Auth::user();
 
-            // Redirect based on the user's role
-            if ($user->role === 'tenant') {
-                return redirect()->route('tenant.dashboard'); // Redirect to tenant dashboard
-            } elseif ($user->role === 'landlord') {
-                return redirect()->route('landlord.dashboard'); // Redirect to landlord dashboard
-            }
-
-            // Default redirect (if needed)
-            return redirect()->route('home');
+            return redirect()->intended(route($user->role . '.dashboard'))
+                ->with('success', "Welcome back, {$user->first_name}!");
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
+        \Log::warning('Authentication failed', ['email' => $request->email]);
+
+        // Authentication failed
+        return back()
+        ->withInput($request->only('email'))
+        ->with('error', 'These credentials do not match our records.');
     }
 }
-

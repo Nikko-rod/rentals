@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Tenant Dashboard | Rentals Tacloban')
+@section('title', 'Landlord Dashboard | Rentals Tacloban')
 
 @section('styles')
 <style>
@@ -16,12 +16,11 @@
         padding: 1.5rem;
         border-radius: 1rem;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        transition: all 0.2s ease;
+        transition: transform 0.2s ease;
     }
 
     .stat-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     .stat-icon {
@@ -49,58 +48,80 @@
         font-size: 0.875rem;
     }
 
-    .dashboard-title {
-        font-size: 1.5rem;
+    .recent-activity {
+        background: var(--white);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .activity-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .activity-title {
+        font-size: 1.25rem;
         font-weight: 600;
-        margin-bottom: 2rem;
         color: var(--text-dark);
+    }
+
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        background: var(--secondary);
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
 @endsection
 
 @section('sidebar')
-<div class="nav-group">
-    <h3 class="nav-group-title">Main Menu</h3>
-    <ul>
         <li class="nav-item">
-            <a href="{{ route('tenant.dashboard') }}" class="nav-link active">
+            <a href="{{ route('landlord.dashboard') }}" class="nav-link active">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
         </li>
         <li class="nav-item">
             <a href="#" class="nav-link">
-                <i class="fas fa-search"></i>
-                <span>Browse Properties</span>
+                <i class="fas fa-building"></i>
+                <span>Properties</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="fas fa-heart"></i>
-                <span>Saved Properties</span>
-            </a>
-        </li>
-    </ul>
-</div>
-
-<div class="nav-group">
-    <h3 class="nav-group-title">Account</h3>
-    <ul>
         <li class="nav-item">
             <a href="#" class="nav-link">
                 <i class="fas fa-message"></i>
-                <span>Messages</span>
+                <span>Inquiries</span>
             </a>
         </li>
-     
         <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="fas fa-user-circle"></i>
-                <span>Profile</span>
-            </a>
+          <a href="{{ route('landlord.profile') }}" class="nav-link {{ Request::routeIs('landlord.profile') ? 'active' : '' }}">
+        <i class="fas fa-user-circle"></i>
+        <span>Profile</span>
+          </a>    
         </li>
-    </ul>
-</div>
+
 @endsection
 
 @section('content')
@@ -112,24 +133,9 @@
             <i class="fas fa-building"></i>
         </div>
         <div class="stat-value">0</div>
-        <div class="stat-label">Active Applications</div>
+        <div class="stat-label">Listed Properties</div>
     </div>
     
-    <div class="stat-card">
-        <div class="stat-icon">
-            <i class="fas fa-key"></i>
-        </div>
-        <div class="stat-value">0</div>
-        <div class="stat-label">Current Rentals</div>
-    </div>
-    
-    <div class="stat-card">
-        <div class="stat-icon">
-            <i class="fas fa-heart"></i>
-        </div>
-        <div class="stat-value">0</div>
-        <div class="stat-label">Saved Properties</div>
-    </div>
     
     <div class="stat-card">
         <div class="stat-icon">
@@ -137,6 +143,20 @@
         </div>
         <div class="stat-value">0</div>
         <div class="stat-label">Unread Messages</div>
+    </div>
+</div>
+
+<div class="recent-activity">
+    <div class="activity-header">
+        <h2 class="activity-title">Recent Activity</h2>
+    </div>
+    <div class="activity-list">
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-info"></i>
+            </div>
+            <div>No recent activity to show.</div>
+        </div>
     </div>
 </div>
 @endsection

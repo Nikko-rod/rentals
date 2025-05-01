@@ -1,247 +1,197 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin | Rentals Tacloban</title>
-    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
-    <style>
-        .toggle-password {
-            position: absolute;
-            top: 50%;
-            right: 12px;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--green);
-            font-weight: bold;
-            cursor: pointer;
-            padding: 0;
-            font-size: 0.9rem;
-        }
+@extends('layouts.main')
 
-        .toggle-password:hover {
-            color: var(--green-hover);
-        }
+@section('title', 'Admin Login | Rentals Tacloban')
 
-        :root {
-            --black: #000;
-            --white: #fff;
-            --green: #14532d;
-            --green-hover: #1f6b3d;
-            --light-green: #4CAF50;
-        }
+@section('styles')
+<style>
+    .login-container {
+        min-height: calc(100vh - 5rem);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
 
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--white);
-            color: var(--black);
-        }
+    .login-form {
+        background: var(--white);
+        padding: 2.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 420px;
+        animation: fadeIn 0.3s ease-out;
+    }
 
-        /* Header */
-        .header {
-            background-color: var(--green);
-            color: var(--white);
-            padding: 20px 0;
-            width: 100%;
-            border-bottom: 3px solid var(--green-hover);
-        }
+    .login-form h2 {
+        color: var(--primary);
+        font-size: 1.75rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
 
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
+    .input-group {
+        margin-bottom: 1.5rem;
+    }
 
-        .header h1 {
-            font-size: 1.8rem;
-            margin: 0;
-        }
+    .input-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+    }
 
-        .header-nav a {
-            color: var(--white);
-            text-decoration: none;
-            margin-left: 20px;
-            font-weight: 500;
-            transition: color 0.2s ease-in-out;
-        }
+    .input-field {
+        position: relative;
+        width: 100%;
+    }
 
-        .header-nav a:hover {
-            color: var(--green-hover);
-        }
+    .input-field input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-left: 2.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: all 0.3s;
+        color: var(--text-dark);
+    }
 
-        /* Main Section */
+    .input-field input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(20, 83, 45, 0.1);
+    }
+
+    .input-field i.icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-light);
+    }
+
+    .input-field i#togglePassword {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-light);
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .input-field i#togglePassword:hover {
+        color: var(--primary);
+    }
+
+    .login-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .login-btn:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-1px);
+    }
+
+    .forgot-password {
+        display: block;
+        text-align: right;
+        color: var(--primary);
+        text-decoration: none;
+        font-size: 0.875rem;
+        margin: 1rem 0;
+        transition: color 0.2s;
+    }
+
+    .forgot-password:hover {
+        color: var(--primary-hover);
+        text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
         .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: calc(100vh - 100px);
-            padding: 20px;
-            background-color: #f9f9f9;
+            padding: 1rem;
         }
 
         .login-form {
-            background-color: var(--white);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
+            padding: 1.5rem;
         }
+    }
+</style>
+@endsection
+@section('content')
+<div class="login-container">
+    <form method="POST" action="{{ route('admin.login') }}" class="login-form">
+        @csrf
 
-        .login-form h2 {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            color: var(--green);
-        }
+        <h2>Admin Login</h2>
 
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            font-weight: 600;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 10px;
-            padding-right: 60px; /* Make room for the toggle button */
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-            color: var(--black);
-            box-sizing: border-box;
-        }
-
-        .password-wrapper {
-            position: relative;
-        }
-
-        .input-group input:focus {
-            border-color: var(--green);
-            outline: none;
-        }
-
-        .login-btn {
-            background-color: var(--green);
-            color: var(--white);
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            width: 100%;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .login-btn:hover {
-            background-color: var(--green-hover);
-        }
-
-        /* Sign Up Dropdown */
-        .signup-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .signup-options {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: var(--green);
-            padding: 10px;
-            border-radius: 6px;
-            animation: fadeIn 0.3s ease-in-out;
-            width: 180px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .signup-options a {
-            display: block;
-            color: var(--white);
-            padding: 8px 10px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.2s ease-in-out;
-        }
-
-        .signup-options a:hover {
-        }
-
-        .signup-dropdown:hover .signup-options {
-            display: block;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- HEADER -->
-    <header class="header">
-        <div class="header-content">
-            <h1>Rentals Tacloban</h1>
+        <div class="input-group">
+            <label for="email">Email Address</label>
+            <div class="input-field">
+                <i class="fas fa-envelope icon"></i>
+                <input type="email" 
+                       name="email" 
+                       id="email" 
+                       placeholder="Enter admin email"
+                       value="{{ old('email') }}"
+                       required 
+                       autofocus>
+            </div>
+            @error('email')
+                <span class="error">{{ $message }}</span>
+            @enderror
         </div>
-    </header>
 
-    <!-- MAIN CONTENT -->
-    <div class="login-container">
-        <form method="POST" action="{{ url('/admin/login') }}" class="login-form">
-            @csrf
-            <h2>Admin</h2>
-
-            @if($errors->any())
-                <div style="color: red; margin-bottom: 15px;">
-                    <ul style="padding-left: 20px;">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <div class="input-group">
-                <label for="email">Email Address</label>
-                <input type="email" name="email" id="email" placeholder="Enter your admin email" value="{{ old('email') }}" required>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <div class="input-field">
+                <i class="fas fa-lock icon"></i>
+                <input type="password" 
+                       name="password" 
+                       id="password" 
+                       placeholder="Enter password" 
+                       required>
+                <i class="fas fa-eye" id="togglePassword"></i>
             </div>
+            @error('password')
+                <span class="error">{{ $message }}</span>
+            @enderror
+        </div>
 
-            <div class="input-group password-wrapper">
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password" placeholder="Enter your password" required>
-                <button type="button" class="toggle-password" onclick="togglePassword()">Show</button>
-            </div>
+        <a href="{{ route('admin.password.request') }}" class="forgot-password">
+            <i class="fas fa-lock"></i> Forgot your password?
+        </a>
 
-            <!-- 👇 Forgot Password Button -->
-            <div style="text-align: right; margin-bottom: 15px;">
-                <a href="{{ url('/admin/forgot-password') }}" style="font-size: 0.9rem; color: var(--green); text-decoration: none;">
-                    Forgot Password?
-                </a>
-            </div>
+        <button type="submit" class="login-btn">
+            <i class="fas fa-sign-in-alt"></i> Login as Admin
+        </button>
+    </form>
+</div>
+@endsection
 
-            <button type="submit" class="login-btn">Login</button>
-        </form>
-    </div>
-
-    <script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleBtn = document.querySelector('.toggle-password');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleBtn.textContent = 'Hide';
-            } else {
-                passwordInput.type = 'password';
-                toggleBtn.textContent = 'Show';
-            }
-        }
-    </script>
-
-</body>
-</html>
+@section('scripts')
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const password = document.getElementById('password');
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
+@endsection

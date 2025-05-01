@@ -1,246 +1,196 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login | Rentals Tacloban</title>
-    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
-    <style>
+@extends('layouts.main')
 
+@section('title', 'Login | Rentals Tacloban')
 
-.toggle-password {
-    position: absolute;
-    top: 50%;
-    right: 12px;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--green);
-    font-weight: bold;
-    cursor: pointer;
-    padding: 0;
-    font-size: 0.9rem;
-}
+@section('styles')
+<style>
+    .login-container {
+        min-height: calc(100vh - 5rem);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
 
-.toggle-password:hover {
-    color: var(--green-hover);
-}
+    .login-form {
+        background: var(--white);
+        padding: 2.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 420px;
+        animation: fadeIn 0.3s ease-out;
+    }
 
-        :root {
-            --black: #000;
-            --white: #fff;
-            --green: #14532d;
-            --green-hover: #1f6b3d;
-            --light-green: #4CAF50;
-        }
+    .login-form h2 {
+        color: var(--primary);
+        font-size: 1.75rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
 
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--white);
-            color: var(--black);
-        }
+    .input-group {
+        margin-bottom: 1.5rem;
+    }
 
-        /* Header */
-        .header {
-            background-color: var(--green);
-            color: var(--white);
-            padding: 20px 0;
-            width: 100%;
-            border-bottom: 3px solid var(--green-hover);
-        }
+    .input-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+    }
 
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
+    .input-field {
+        position: relative;
+        width: 100%;
+    }
 
-        .header h1 {
-            font-size: 1.8rem;
-            margin: 0;
-        }
+    .input-field input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-right: 2.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: all 0.3s;
+        color: var(--text-dark);
+    }
 
-        .header-nav a {
-            color: var(--white);
-            text-decoration: none;
-            margin-left: 20px;
-            font-weight: 500;
-            transition: color 0.2s ease-in-out;
-        }
+    .input-field input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(20, 83, 45, 0.1);
+    }
 
-        .header-nav a:hover {
-            color: var(--green-hover);
-        }
+    .input-field i {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-light);
+        cursor: pointer;
+        transition: color 0.2s;
+    }
 
-        /* Main Section */
+    .input-field i:hover {
+        color: var(--primary);
+    }
+
+    .login-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .login-btn:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-1px);
+    }
+
+    .forgot-password {
+        display: block;
+        text-align: right;
+        color: var(--primary);
+        text-decoration: none;
+        font-size: 0.875rem;
+        margin: 1rem 0;
+        transition: color 0.2s;
+    }
+
+    .forgot-password:hover {
+        color: var(--primary-hover);
+        text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
         .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: calc(100vh - 100px);
-            padding: 20px;
-            background-color: #f9f9f9;
+            padding: 1rem;
         }
 
         .login-form {
-            background-color: var(--white);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-form h2 {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            color: var(--green);
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            font-weight: 600;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .input-group input {
-    width: 100%;
-    padding: 10px;
-    padding-right: 60px; /* Make room for the toggle button */
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    color: var(--black);
-    box-sizing: border-box;
-}
-
-.password-wrapper {
-    position: relative;
-}
-
-
-        .input-group input:focus {
-            border-color: var(--green);
-            outline: none;
-        }
-
-        .login-btn {
-            background-color: var(--green);
-            color: var(--white);
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            width: 100%;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .login-btn:hover {
-            background-color: var(--green-hover);
-        }
-
-        /* Sign Up Dropdown */
-        .signup-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .signup-options {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: var(--green);
-            padding: 10px;
-            border-radius: 6px;
-            animation: fadeIn 0.3s ease-in-out;
-            width: 180px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .signup-options a {
-            display: block;
-            color: var(--white);
-            padding: 8px 10px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.2s ease-in-out;
-        }
-
-        .signup-options a:hover {
-           
-        }
-
-        .signup-dropdown:hover .signup-options {
-            display: block;
-        }
-
-    </style>
-</head>
-<body>
-
-    <!-- HEADER -->
-    <header class="header">
-        <div class="header-content">
-            <h1>Rentals Tacloban</h1>
-            <nav class="header-nav">
-                <div class="signup-dropdown">
-                    <a href="#">Sign Up</a>
-                    <div class="signup-options">
-                        <a href="{{ url('/register/tenant') }}">As Tenant</a>
-                        <a href="{{ url('/register/landlord') }}">As Landlord</a>
-                    </div>
-                </div>
-                <a href="{{ route('login') }}">Login</a>
-            </nav>
-        </div>
-    </header>
-
-    <!-- MAIN CONTENT -->
-    <div class="login-container">
-        <form method="POST" action="{{ route('login') }}" class="login-form">
-            @csrf
-            <h2>Login to Your Account</h2>
-
-            <div class="input-group">
-                <label for="email">Email Address</label>
-                <input type="email" name="email" id="email" placeholder="Enter your email" required>
-            </div>
-
-            <div class="input-group password-wrapper">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" placeholder="Enter your password" required>
-            <button type="button" class="toggle-password" onclick="togglePassword()">Show</button>
-            </div>
-
-
-            <button type="submit" class="login-btn">Login</button>
-
-        </form>
-    </div>
-    <script>
-    function togglePassword() {
-        const passwordInput = document.getElementById('password');
-        const toggleBtn = document.querySelector('.toggle-password');
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            toggleBtn.textContent = 'Hide';
-        } else {
-            passwordInput.type = 'password';
-            toggleBtn.textContent = 'Show';
+            padding: 1.5rem;
         }
     }
-</script>
+</style>
+@endsection
 
-</body>
-</html>
+@section('content')
+<div class="login-container">
+    <form method="POST" action="{{ route('login.submit') }}" class="login-form">
+        @csrf
+        
+        @error('email')
+            <div class="alert alert-error fade-in">
+                {{ $message }}
+            </div>
+        @enderror
+
+        @error('password')
+            <div class="alert alert-error fade-in">
+                {{ $message }}
+            </div>
+        @enderror
+
+        <h2>Welcome Back</h2>
+    
+        <div class="input-group">
+            <label for="email">Email Address</label>
+            <div class="input-field">
+                <input type="email" 
+                       name="email" 
+                       id="email" 
+                       placeholder="Enter your email"
+                       value="{{ old('email') }}"
+                       required 
+                       autofocus>
+                <i class="fas fa-envelope"></i>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="password">Password</label>
+            <div class="input-field">
+                <input type="password" 
+                       name="password" 
+                       id="password" 
+                       placeholder="Enter your password" 
+                       required>
+                <i class="fas fa-eye" id="togglePassword"></i>
+            </div>
+        </div>
+
+        <a href="{{ route('password.request') }}" class="forgot-password">
+            <i class="fas fa-lock"></i> Forgot your password?
+        </a>
+
+        <button type="submit" class="login-btn">
+            <i class="fas fa-sign-in-alt"></i> Log In
+        </button>
+    </form>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const password = document.getElementById('password');
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+
+</script>
+@endsection

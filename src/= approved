@@ -1,0 +1,10 @@
+[90m= [39m[34;4mApp\Models\Landlord[39;24m {#5970
+    [34mid[39m: [35m1[39m,
+    [34muser_id[39m: [35m26[39m,
+    [34mbusiness_permit[39m: "[32mbusiness-permits/FJjuuO2zNW7rTjD5HG9QVEN9jXCMyZ1i2eUp3eI6.pdf[39m",
+    [34mcreated_at[39m: "[32m2025-04-29 04:23:18[39m",
+    [34mupdated_at[39m: "[32m2025-04-30 11:25:33[39m",
+    [34mapproval_status[39m: "[32mpending[39m",
+    [34mrejection_remark[39m: "[32mexpired_document[39m",
+  }
+
