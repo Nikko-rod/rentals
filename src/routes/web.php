@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\TenantRegistrationController;
 use App\Http\Controllers\Auth\LandlordRegistrationController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Landlord\LandlordProfileController;
+use App\Http\Controllers\Landlord\PropertyController;
+
 
 Auth::routes(['verify' => true]);
 
@@ -66,8 +68,6 @@ Route::prefix('email')->group(function () {
         ->name('verification.resend');
 });
 
-
-
 Route::middleware(['auth', 'verified'])->group(function () {
  
     Route::prefix('tenant')->middleware('role:tenant')->group(function () {
@@ -84,7 +84,32 @@ Route::middleware(['auth', 'verified'])->group(function () {
                  ->name('landlord.profile.upload-permit');
             Route::patch('/landlord/profile', [LandlordProfileController::class, 'update'])
                  ->name('landlord.profile.update');
-
+         
+             // Property routes
+    Route::get('/properties', [PropertyController::class, 'index'])
+    ->name('landlord.properties.index');
+    
+Route::get('/properties/create', [PropertyController::class, 'create'])
+    ->name('landlord.properties.create');
+    
+Route::post('/properties', [PropertyController::class, 'store'])
+    ->name('landlord.properties.store');
+    
+Route::get('/properties/{property}/edit', [PropertyController::class, 'edit'])
+    ->name('landlord.properties.edit');
+    
+Route::put('/properties/{property}', [PropertyController::class, 'update'])
+    ->name('landlord.properties.update');
+    
+Route::delete('/properties/{property}', [PropertyController::class, 'destroy'])
+    ->name('landlord.properties.destroy');
+    
+Route::delete('/properties/images/{image}', [PropertyController::class, 'deleteImage'])
+    ->name('landlord.properties.deleteImage');
+    Route::get('/properties/{property}', [PropertyController::class, 'show'])
+    ->name('landlord.properties.show');
+            
+                 
     
     });
 });

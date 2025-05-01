@@ -14,11 +14,12 @@
             --danger-light: #fee2e2;
             --text-dark: #1e293b;
             --text-light: #64748b;
-            --error: #dc2626;
+             --error: #dc2626;
             --success: #16a34a;
             --warning: #ca8a04;
             --white: #ffffff;
             --border: #e2e8f0;
+            --border-color:rgb(208, 221, 238);
         }
 
         * {

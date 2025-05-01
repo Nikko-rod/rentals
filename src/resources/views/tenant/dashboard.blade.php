@@ -69,7 +69,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
+        <a href="{{ route('landlord.properties.index') }}" class="nav-link">
                 <i class="fas fa-search"></i>
                 <span>Browse Properties</span>
             </a>

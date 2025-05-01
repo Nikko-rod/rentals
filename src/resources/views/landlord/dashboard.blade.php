@@ -104,7 +104,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
+        <a href="{{ route('landlord.properties.index') }}" class="nav-link">
                 <i class="fas fa-building"></i>
                 <span>Properties</span>
             </a>

@@ -2,35 +2,38 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Property extends Model
 {
-    use HasFactory, SoftDeletes;
-
     protected $fillable = [
-        'name',
-        'description',
         'user_id',
-        'price',
-        'location',
+        'title',
+        'description',
+        'contact_number',
+        'available_for',
         'type',
-        'gender_restriction',
-        'landmarks',
-        'is_available',
-        'is_verified'
+        'address',
+        'monthly_rent',
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
-        'is_available' => 'boolean',
-        'is_verified' => 'boolean'
+        'monthly_rent' => 'decimal:2',
     ];
 
-    public function landlord()
+    public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(PropertyImage::class);
     }
 }
