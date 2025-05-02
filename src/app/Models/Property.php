@@ -36,4 +36,8 @@ class Property extends Model
     {
         return $this->hasMany(PropertyImage::class);
     }
+    public function inquiries()
+{
+    return $this->hasMany(Inquiry::class);
+}
 }

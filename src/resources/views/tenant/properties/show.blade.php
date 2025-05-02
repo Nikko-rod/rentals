@@ -16,11 +16,11 @@
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link">
-            <i class="fas fa-message"></i>
-            <span>Inquiries</span>
-        </a>
-    </li>
+    <a href="{{ route('tenant.inquiries.index') }}" class="nav-link">
+        <i class="fas fa-message"></i>
+        <span>Inquiries</span>
+    </a>
+</li>
     <li class="nav-item">
           <a href="{{ route('tenant.profile') }}" class="nav-link {{ Request::routeIs('tenant.profile') ? 'active' : '' }}">
         <i class="fas fa-user-circle"></i>
@@ -108,10 +108,28 @@
             </div>
 
             <!-- Contact Button -->
-            <button onclick="sendInquiry({{ $property->id }})" 
-                    style="width: 100%; padding: 0.75rem; background: var(--primary); color: var(--white); border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 500; transition: background-color 0.2s ease;">
-                Send Inquiry
-            </button>
+            <div class="info-card">
+    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Send Inquiry</h3>
+    
+    <form action="{{ route('tenant.inquiries.store', $property) }}" method="POST">
+        @csrf
+        <div style="margin-bottom: 1rem;">
+            <textarea name="message" 
+                      id="message" 
+                      rows="4" 
+                      class="form-input @error('message') error @enderror"
+                      required>{{ old('message') }}</textarea>
+            @error('message')
+                <p class="error-text">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <button type="submit" 
+                class="btn-primary w-full">
+            Send Inquiry
+        </button>
+    </form>
+</div>
         </div>
     </div>
 </div>

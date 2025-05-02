@@ -110,11 +110,11 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="fas fa-message"></i>
-                <span>Inquiries</span>
-            </a>
-        </li>
+        <a href="{{ route('landlord.inquiries.index') }}" class="nav-link">
+            <i class="fas fa-message"></i>
+            <span>Inquiries</span>
+        </a>
+    </li>
         <li class="nav-item">
           <a href="{{ route('landlord.profile') }}" class="nav-link {{ Request::routeIs('landlord.profile') ? 'active' : '' }}">
         <i class="fas fa-user-circle"></i>

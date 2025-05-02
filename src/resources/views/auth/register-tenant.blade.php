@@ -238,31 +238,31 @@
     </form>
 </div>
 @endsection
-
 @section('scripts')
 <script>
+    // Password toggle functionality
     function togglePassword(inputId, iconId) {
         const input = document.getElementById(inputId);
         const icon = document.getElementById(iconId);
-        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-        input.setAttribute('type', type);
-        icon.classList.toggle('fa-eye');
-        icon.classList.toggle('fa-eye-slash');
+        
+        if (!input || !icon) return;
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
     }
 
-    document.getElementById('togglePassword').addEventListener('click', function() {
-        togglePassword('password', 'togglePassword');
-    });
-
-    document.getElementById('togglePasswordConfirm').addEventListener('click', function() {
-        togglePassword('password_confirmation', 'togglePasswordConfirm');
-    });
-
-      // Password validation
-      const password = document.getElementById('password');
+    // Password validation
+    const password = document.getElementById('password');
     const passwordConfirm = document.getElementById('password_confirmation');
     const form = document.querySelector('.register-form');
-    
+
     function createErrorMessage(inputElement, message) {
         let errorDiv = inputElement.parentElement.nextElementSibling;
         if (!errorDiv || !errorDiv.classList.contains('error-message')) {
@@ -303,15 +303,23 @@
         return isValid;
     }
 
-    password.addEventListener('input', validatePassword);
-    passwordConfirm.addEventListener('input', validatePassword);
+    // Event Listeners
+    if (password) {
+        password.addEventListener('input', validatePassword);
+    }
+    
+    if (passwordConfirm) {
+        passwordConfirm.addEventListener('input', validatePassword);
+    }
 
-    document.getElementById('togglePassword').addEventListener('click', function() {
-        togglePassword('password', 'togglePassword');
-    });
+    const togglePasswordBtn = document.getElementById('togglePassword');
+    if (togglePasswordBtn) {
+        togglePasswordBtn.addEventListener('click', () => togglePassword('password', 'togglePassword'));
+    }
 
-    document.getElementById('togglePasswordConfirm').addEventListener('click', function() {
-        togglePassword('password_confirmation', 'togglePasswordConfirm');
-    });
+    const toggleConfirmBtn = document.getElementById('togglePasswordConfirm');
+    if (toggleConfirmBtn) {
+        toggleConfirmBtn.addEventListener('click', () => togglePassword('password_confirmation', 'togglePasswordConfirm'));
+    }
 </script>
 @endsection

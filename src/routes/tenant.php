@@ -25,5 +25,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ->name('tenant.profile');
 Route::patch('/profile', [ProfileController::class, 'update'])
     ->name('tenant.profile.update');
+
+
+    Route::get('/inquiries', [App\Http\Controllers\Tenant\InquiryController::class, 'index'])
+        ->name('tenant.inquiries.index');
+    Route::post('/properties/{property}/inquire', [App\Http\Controllers\Tenant\InquiryController::class, 'store'])
+        ->name('tenant.inquiries.store');
+
+        Route::get('/inquiries/{inquiry}', [App\Http\Controllers\Tenant\InquiryController::class, 'show'])
+        ->name('tenant.inquiries.show');
+        Route::post('/inquiries/{inquiry}/reply', [App\Http\Controllers\Tenant\InquiryController::class, 'reply'])
+        ->name('tenant.inquiries.reply');
+        Route::get('/inquiries', [App\Http\Controllers\Tenant\InquiryController::class, 'index'])
+        ->name('tenant.inquiries.index');
 }
 );

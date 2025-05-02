@@ -116,7 +116,7 @@
         </a>
     </li>
     <li class="nav-item">
-        <a href="#" class="nav-link">
+        <a href="{{ route('landlord.inquiries.index') }}" class="nav-link">
             <i class="fas fa-message"></i>
             <span>Inquiries</span>
         </a>

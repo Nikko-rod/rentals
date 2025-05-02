@@ -103,8 +103,15 @@ Route::delete('/properties/images/{image}', [PropertyController::class, 'deleteI
     ->name('landlord.properties.deleteImage');
     Route::get('/properties/{property}', [PropertyController::class, 'show'])
     ->name('landlord.properties.show');
-            
-                 
+
+    Route::get('/inquiries', [App\Http\Controllers\Landlord\InquiryController::class, 'index'])
+    ->name('landlord.inquiries.index');
+Route::patch('/inquiries/{inquiry}', [App\Http\Controllers\Landlord\InquiryController::class, 'update'])
+    ->name('landlord.inquiries.update');
+    Route::get('/inquiries/{inquiry}', [App\Http\Controllers\Landlord\InquiryController::class, 'show'])
+    ->name('landlord.inquiries.show');                   
+    Route::post('/inquiries/{inquiry}/reply', [App\Http\Controllers\Landlord\InquiryController::class, 'reply'])
+    ->name('landlord.inquiries.reply');
     
     });
 });

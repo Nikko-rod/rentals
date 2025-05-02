@@ -73,11 +73,11 @@
         </li>
 
         <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="fas fa-message"></i>
-                <span>Inquiries</span>
-            </a>
-        </li>
+    <a href="{{ route('tenant.inquiries.index') }}" class="nav-link">
+        <i class="fas fa-message"></i>
+        <span>Inquiries</span>
+    </a>
+</li>
      
         <li class="nav-item">
           <a href="{{ route('tenant.profile') }}" class="nav-link {{ Request::routeIs('tenant.profile') ? 'active' : '' }}">
