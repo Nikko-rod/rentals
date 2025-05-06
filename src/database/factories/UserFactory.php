@@ -3,45 +3,52 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
-
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => Hash::make('password'), // default password
+            'password' => Hash::make('password123'), // default password for testing
             'remember_token' => Str::random(10),
-            'role' => 'tenant', // Default; you can override when calling the factory
+            'role' => $this->faker->randomElement(['tenant', 'landlord', 'admin']),
+            'contact_number' => $this->faker->numerify('09#########'),
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Indicate that the user is a tenant.
      */
-    public function unverified(): static
+    public function tenant(): static
     {
         return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+            'role' => 'tenant',
+        ]);
+    }
+
+    /**
+     * Indicate that the user is a landlord.
+     */
+    public function landlord(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'landlord',
+        ]);
+    }
+
+    /**
+     * Indicate that the user is an admin.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
         ]);
     }
 }
-
-

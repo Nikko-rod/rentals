@@ -16,16 +16,16 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        // Add debugging
+
         \Log::info('Login attempt started', ['email' => $request->email]);
 
-        // Validate the form data
+     
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        // Try to authenticate
+      
         if (Auth::attempt($credentials)) {
             \Log::info('Authentication successful', ['user' => Auth::id()]);
             
@@ -38,7 +38,6 @@ class LoginController extends Controller
 
         \Log::warning('Authentication failed', ['email' => $request->email]);
 
-        // Authentication failed
         return back()
         ->withInput($request->only('email'))
         ->with('error', 'These credentials do not match our records.');

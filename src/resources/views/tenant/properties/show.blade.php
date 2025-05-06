@@ -1,259 +1,337 @@
-@extends('layouts.dashboard')
+@extends('layouts.final-dashboard')
 
 @section('title', $property->title . ' | Rentals Tacloban')
+@section('dashboard-title', 'Tenant Portal')
+@section('page-title', 'Property Details')
 
-@section('sidebar')
-    <li class="nav-item">
-        <a href="{{ route('tenant.dashboard') }}" class="nav-link">
-            <i class="fas fa-home"></i>
-            <span>Dashboard</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="{{ route('tenant.properties.index') }}" class="nav-link active">
-            <i class="fas fa-search"></i>
-            <span>Browse Properties</span>
-        </a>
-    </li>
-    <li class="nav-item">
-    <a href="{{ route('tenant.inquiries.index') }}" class="nav-link">
-        <i class="fas fa-message"></i>
+@push('styles')
+<style>
+    .aspect-w-4 {
+        position: relative;
+        padding-bottom: 75%; /* 4:3 Aspect Ratio (divide 3 by 4 = 0.75) */
+    }
+
+    .aspect-w-4 > a {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    .aspect-w-4 img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* First image styling */
+    .col-span-2.row-span-2 .aspect-w-4 {
+        padding-bottom: 75%; /* Maintain aspect ratio for larger image */
+    }
+ .lb-outerContainer {
+        max-height: 85vh !important;
+        background-color: white !important;
+        border-radius: 8px 8px 0 0 !important;
+    }
+
+    .lb-container {
+        padding: 12px !important;
+    }
+
+    .lb-image {
+        border: none !important;
+        border-radius: 4px !important;
+        object-fit: contain !important;
+    }
+
+    .lb-dataContainer {
+        background-color: white !important;
+        border-radius: 0 0 8px 8px !important;
+        padding: 12px !important;
+    }
+
+    .lightbox {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+    }
+
+    /* Improve navigation visibility */
+    .lb-nav a.lb-prev,
+    .lb-nav a.lb-next {
+        opacity: 0.8;
+        filter: brightness(0.7) !important;
+    }
+
+    .lb-nav a.lb-prev:hover,
+    .lb-nav a.lb-next:hover {
+        opacity: 1;
+    }
+
+</style>
+@endpush
+
+
+@section('sidebar-menu')
+    <a href="{{ route('tenant.dashboard') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 
+              {{ Request::routeIs('tenant.dashboard') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-home w-5"></i>
+        <span>Dashboard</span>
+    </a>
+    
+    <a href="{{ route('tenant.properties.index') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('tenant.properties.*') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-search w-5"></i>
+        <span>Browse Properties</span>
+    </a>
+
+    <a href="{{ route('tenant.inquiries.index') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('tenant.inquiries.*') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-message w-5"></i>
         <span>Inquiries</span>
     </a>
-</li>
-    <li class="nav-item">
-          <a href="{{ route('tenant.profile') }}" class="nav-link {{ Request::routeIs('tenant.profile') ? 'active' : '' }}">
-        <i class="fas fa-user-circle"></i>
+
+    <a href="{{ route('tenant.profile') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('tenant.profile') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-user-circle w-5"></i>
         <span>Profile</span>
-          </a>    
-        </li>
+    </a>
 @endsection
 
-
-
-
 @section('content')
-<div class="content-card">
-    <!-- Back Button and Title -->
-    <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-        <a href="{{ route('tenant.properties.index') }}" 
-           style="margin-right: 1rem; color: var(--text-light);">
-            <i class="fas fa-arrow-left"></i>
-        </a>
-        <h1 style="font-size: 1.5rem; font-weight: 600;">Property Details</h1>
-    </div>
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Back Button and Title -->
+        <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm">
+            <a href="{{ route('tenant.properties.index') }}" 
+               class="p-2.5 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition duration-300">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">{{ $property->title }}</h1>
+                <p class="text-gray-500 mt-1">
+                    <i class="fas fa-map-marker-alt mr-2"></i>
+                    {{ $property->address }}
+                </p>
+            </div>
+        </div>
 
-    <!-- Property Images -->
-    <div class="property-images">
-        @forelse($property->images as $image)
-            <div class="image-container">
-                <img src="{{ Storage::url($image->image_path) }}" 
-                     alt="Property image"
-                     onerror="this.onerror=null; this.src='{{ asset('images/placeholder.jpg') }}';">
+
+<!-- Image Gallery -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="p-6 border-b border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-800">Property Gallery</h2>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 p-6">
+        @forelse($property->images as $key => $image)
+            <div class="relative {{ $key === 0 ? 'col-span-2 row-span-2' : '' }} rounded-lg overflow-hidden group shadow-sm">
+                <div class="aspect-w-4 aspect-h-3 w-full h-full">
+                    <a href="{{ Storage::url($image->image_path) }}" 
+                       data-lightbox="property-gallery"
+                       data-title="{{ $property->title }} - Image {{ $key + 1 }}"
+                       class="block w-full h-full">
+                        <img src="{{ Storage::url($image->image_path) }}" 
+                             alt="Property image {{ $key + 1 }}"
+                             class="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                             loading="{{ $key === 0 ? 'eager' : 'lazy' }}"
+                             onerror="this.onerror=null; this.src='{{ asset('images/placeholder.jpg') }}'"
+                             >
+                        
+                        <!-- Hover Overlay -->
+                        <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300">
+                            <div class="absolute bottom-3 right-3 bg-black/70 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                                <i class="fas fa-search-plus"></i>
+                                <span>View</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
         @empty
-            <div class="image-container">
-                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-home" style="font-size: 3rem; color: var(--text-light);"></i>
+            <div class="col-span-full p-12 bg-gray-50 rounded-lg">
+                <div class="text-center">
+                    <i class="fas fa-image text-4xl text-gray-300 mb-3"></i>
+                    <p class="text-gray-500">No images available for this property</p>
                 </div>
             </div>
         @endforelse
     </div>
-
-    <!-- Property Information -->
-    <div class="property-info">
-        <!-- Main Content -->
-        <div>
-            <h2 class="property-title">{{ $property->title }}</h2>
-            
-            <div style="display: flex; flex-wrap: wrap; gap: 2rem; margin-bottom: 1.5rem;">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-money-bill"></i>
-                    <span class="property-price">₱{{ number_format($property->monthly_rent, 2) }}/month</span>
-                </div>
-                
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1;">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span class="property-address">{{ $property->address ?: 'Address not provided' }}</span>
-                </div>
-            </div>
-
-            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
-                <span class="badge">
-                    <i class="fas fa-home"></i> {{ ucfirst($property->type) }}
-                </span>
-                <span class="badge">
-                    <i class="fas fa-users"></i> For {{ ucfirst($property->available_for) }}
-                </span>
-            </div>
-
-            <div style="margin-bottom: 2rem;">
-                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Description</h3>
-                <p class="property-description">{{ $property->description ?: 'No description provided' }}</p>
-            </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="info-card">
-            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Contact Information</h3>
-            
-            <div class="contact-info" style="margin-bottom: 1rem;">
-                <p style="font-weight: 500; margin-bottom: 0.25rem;">Owner</p>
-                <p>{{ $property->user->first_name }} {{ $property->user->last_name }}</p>
-            </div>
-
-            <div class="contact-info" style="margin-bottom: 1rem;">
-                <p style="font-weight: 500; margin-bottom: 0.25rem;">Contact Number</p>
-                <p>{{ $property->contact_number ?: 'Not provided' }}</p>
-            </div>
-
-            <!-- Contact Button -->
-            <div class="info-card">
-    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Send Inquiry</h3>
-    
-    <form action="{{ route('tenant.inquiries.store', $property) }}" method="POST">
-        @csrf
-        <div style="margin-bottom: 1rem;">
-            <textarea name="message" 
-                      id="message" 
-                      rows="4" 
-                      class="form-input @error('message') error @enderror"
-                      required>{{ old('message') }}</textarea>
-            @error('message')
-                <p class="error-text">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <button type="submit" 
-                class="btn-primary w-full">
-            Send Inquiry
-        </button>
-    </form>
 </div>
+
+        <!-- Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Quick Info Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                        <p class="text-sm text-gray-500 mb-1">Monthly Rent</p>
+                        <p class="text-xl font-semibold text-green-700">₱{{ number_format($property->monthly_rent) }}</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                        <p class="text-sm text-gray-500 mb-1">Property Type</p>
+                        <p class="text-xl font-semibold text-gray-800">{{ ucfirst($property->type) }}</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                        <p class="text-sm text-gray-500 mb-1">Available For</p>
+                        <p class="text-xl font-semibold text-gray-800">{{ ucfirst($property->available_for) }}</p>
+                    </div>
+                </div>
+
+                <!-- Property Details -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h2 class="text-lg font-semibold text-gray-800">Property Details</h2>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="prose max-w-none">
+                            <p class="text-gray-600 whitespace-pre-line">{{ $property->description ?: 'No description provided' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Contact Card -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h2 class="text-lg font-semibold text-gray-800">Contact Owner</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg mb-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Property Owner</p>
+                                <p class="font-medium text-gray-800">{{ $property->user->first_name }} {{ $property->user->last_name }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                            <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-phone text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Contact Number</p>
+                                <p class="font-medium text-gray-800">{{ $property->contact_number ?: 'Not provided' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inquiry Form -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h2 class="text-lg font-semibold text-gray-800">Send Inquiry</h2>
+                    </div>
+                                                    <div class="p-6">
+                                    <form action="{{ route('tenant.inquiries.store', $property) }}" method="POST">
+                                        @csrf
+                                        <div class="space-y-4">
+                                            <div class="relative">
+                                                <textarea name="message" 
+                                                        id="message" 
+                                                        rows="6" 
+                                                        maxlength="250"
+                                                        placeholder="Write your message here..."
+                                                        class="w-full rounded-lg border-gray-300 p-2 focus:border-green-500 focus:ring focus:ring-green-200 resize-none text-base"
+                                                        required>{{ old('message') }}</textarea>
+                                                <div class="absolute bottom-2 right-2 text-sm text-gray-500">
+                                                    <span id="charCount">0</span>/250
+                                                </div>
+                                            </div>
+                                            @error('message')
+                                                <p class="text-red-600 text-sm">{{ $message }}</p>
+                                            @enderror
+
+                                            <button type="submit" 
+                                                    class="w-full px-6 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 transition duration-300 flex items-center justify-center gap-2 font-medium">
+                                                <i class="fas fa-paper-plane"></i>
+                                                <span>Send Inquiry</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    @push('scripts')
+    <script>
 
 
-@endsection
 
-@section('scripts')
-<script>
-function sendInquiry(propertyId) {
-    // Prevent spam clicking
-    const button = event.target;
-    button.disabled = true;
-    button.style.opacity = '0.7';
+   lightbox.option({
+        'resizeDuration': 300,
+        'wrapAround': true,
+        'fadeDuration': 300,
+        'imageFadeDuration': 300,
+        'disableScrolling': true,
+        'fitImagesInViewport': true,
+        'maxWidth': Math.min(1200, window.innerWidth * 0.9),
+        'maxHeight': window.innerHeight * 0.85,
+        'positionFromTop': 50,
+        'alwaysShowNavOnTouchDevices': true,
+        'showImageNumberLabel': true,
+        'albumLabel': 'Image %1 of %2',
+        'containerPadding': 12,
+        'imagePadding': 12
+    });
+
+    // Ensure proper sizing on window resize
+    window.addEventListener('resize', function() {
+        lightbox.option({
+            'maxWidth': Math.min(1200, window.innerWidth * 0.9),
+            'maxHeight': window.innerHeight * 0.85
+        });
+    });
+
+    // Fix modal positioning after image load
+    $(document).on('loaded.lb', function() {
+        setTimeout(function() {
+            $('.lightbox').css({
+                'position': 'fixed',
+                'top': '50%',
+                'left': '50%',
+                'transform': 'translate(-50%, -50%)'
+            });
+        }, 0);
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const messageInput = document.getElementById('message');
+    const charCount = document.getElementById('charCount');
+
+    function updateCharCount() {
+        const count = messageInput.value.length;
+        charCount.textContent = count;
+        
+        if (count >= 200) {
+            charCount.classList.add('text-yellow-600');
+        } else if (count >= 240) {
+            charCount.classList.remove('text-yellow-600');
+            charCount.classList.add('text-red-600');
+        } else {
+            charCount.classList.remove('text-yellow-600', 'text-red-600');
+        }
+    }
+
+    messageInput.addEventListener('input', updateCharCount);
+    messageInput.addEventListener('keyup', updateCharCount);
     
-    setTimeout(() => {
-        button.disabled = false;
-        button.style.opacity = '1';
-        alert('Inquiry feature coming soon!');
-    }, 1000);
-}
+    // Initialize counter
+    updateCharCount();
+});
+
 </script>
-@endsection
-
-@section('styles')
-<style>
-    .property-images {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-        max-width: 100%;
-    }
-
-    .image-container {
-        position: relative;
-        padding-top: 75%;
-        border-radius: 0.5rem;
-        overflow: hidden;
-        background: var(--secondary);
-    }
-
-    .image-container img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-
-    .image-container:hover img {
-        transform: scale(1.05);
-    }
-
-    .property-info {
-        display: grid;
-        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-        gap: 2rem;
-    }
-
-    .info-card {
-        background: var(--white);
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        height: fit-content;
-        position: sticky;
-        top: 1rem;
-    }
-
-    .property-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        word-break: break-word;
-        line-height: 1.3;
-    }
-
-    .property-price {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--primary);
-        white-space: nowrap;
-    }
-
-    .property-address {
-        word-break: break-word;
-        max-width: 100%;
-    }
-
-    .property-description {
-        line-height: 1.6;
-        color: var(--text-dark);
-        white-space: pre-line;
-        word-break: break-word;
-        max-height: 300px;
-        overflow-y: auto;
-        padding-right: 1rem;
-    }
-
-    .badge {
-        padding: 0.5rem 1rem;
-        background: var(--secondary);
-        border-radius: 0.5rem;
-        white-space: nowrap;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .contact-info {
-        word-break: break-word;
-    }
-
-    @media (max-width: 1024px) {
-        .property-info {
-            grid-template-columns: 1fr;
-        }
-
-        .info-card {
-            position: static;
-        }
-    }
-</style>
+@endpush
 @endsection

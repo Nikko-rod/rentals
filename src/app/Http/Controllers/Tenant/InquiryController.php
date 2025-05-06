@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Tenant;
 use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\Inquiry;
-use App\Models\InquiryMessage;
 use Illuminate\Http\Request;
 
 class InquiryController extends Controller
@@ -23,7 +22,7 @@ class InquiryController extends Controller
     public function store(Request $request, Property $property)
     {
         $validated = $request->validate([
-            'message' => ['required', 'string', 'min:10', 'max:500']
+            'message' => ['required', 'string', 'min:10', 'max:250']
         ]);
 
         $inquiry = Inquiry::create([
@@ -32,69 +31,94 @@ class InquiryController extends Controller
             'property_id' => $property->id,
             'quoted_monthly_rent' => $property->monthly_rent,
             'quoted_type' => $property->type,
-            'message' => $validated['message'],
-            'quoted_contact_number' => $property->contact_number
+            'quoted_contact_number' => $property->contact_number,
+            'message' => $validated['message']
         ]);
 
-        // Create initial message
-        InquiryMessage::create([
-            'inquiry_id' => $inquiry->id,
-            'message' => $validated['message'],
-            'is_landlord' => false
-        ]);
+        // Add initial message using new method
+        $inquiry->addMessage($validated['message'], false);
 
         return back()->with('success', 'Inquiry sent successfully!');
     }
 
+    public function reply(Request $request, Inquiry $inquiry)
+{
+    abort_if($inquiry->tenant_id !== auth()->id(), 403);
+
+    // Get fresh message count
+    if (!$inquiry->canAddMoreMessages()) {
+        return back()->with('error', 'Maximum messages limit (10) reached.');
+    }
+
+    // Get fresh last message to check turn
+    $lastMessage = $inquiry->messages()
+        ->orderBy('created_at', 'desc')
+        ->orderBy('id', 'desc')
+        ->first();
+
+    if ($lastMessage && !$lastMessage->is_landlord) {
+        return back()->with('error', 'Please wait for landlord\'s response before sending another message.');
+    }
+
+    $validated = $request->validate([
+        'message' => ['required', 'string', 'max:150']
+    ]);
+
+    try {
+        $message = $inquiry->addMessage($validated['message'], false);
+        
+        \Log::info('Message Created', [
+            'message_id' => $message->id,
+            'inquiry_id' => $inquiry->id,
+            'is_landlord' => false,
+            'created_at' => $message->created_at->toDateTimeString()
+        ]);
+
+        return back()->with('success', 'Message sent successfully');
+    } catch (\Exception $e) {
+        \Log::error('Failed to create message', [
+            'error' => $e->getMessage(),
+            'inquiry_id' => $inquiry->id
+        ]);
+        
+        return back()->with('error', 'Failed to send message. Please try again.');
+    }
+}
+
+
+
     public function show(Inquiry $inquiry)
     {
         abort_if($inquiry->tenant_id !== auth()->id(), 403);
-
+    
+        // Force fresh loading of messages with strict ordering
         $messages = $inquiry->messages()
-            ->orderBy('created_at')
+            ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc')  // Secondary ordering by ID for same timestamps
             ->get();
-
-        if (!$inquiry->read_at) {
+        
+        // Get fresh last message
+        $lastMessage = $messages->last();
+    
+        // Debug logging with more details
+        \Log::info('Show Inquiry Debug', [
+            'inquiry_id' => $inquiry->id,
+            'user_id' => auth()->id(),
+            'user_role' => auth()->user()->role,
+            'message_count' => $messages->count(),
+            'all_messages' => $messages->map(fn($msg) => [
+                'id' => $msg->id,
+                'is_landlord' => (bool) $msg->is_landlord,
+                'message' => $msg->message,
+                'created_at' => $msg->created_at->toDateTimeString()
+            ])->toArray(),
+            'can_reply' => $inquiry->canReply()
+        ]);
+    
+        if ($inquiry->isUnread()) {
             $inquiry->markAsRead();
         }
-
+    
         return view('tenant.inquiries.show', compact('inquiry', 'messages'));
-    }
-
-        public function reply(Request $request, Inquiry $inquiry)
-    {
-        abort_if($inquiry->tenant_id !== auth()->id(), 403);
-    
-        // Check message count first
-        $messageCount = $inquiry->messages()->count();
-        if ($messageCount >= 10) {
-            return back()->with('error', 'Maximum messages limit (10) reached.');
-        }
-    
-        // Get the last message and check if tenant can reply
-        $lastMessage = $inquiry->messages()->latest()->first();
-        if (!$lastMessage) {
-            // First message - tenant can reply
-            $canReply = true;
-        } else {
-            // Can reply if last message was from landlord
-            $canReply = $lastMessage->is_landlord;
-        }
-    
-        if (!$canReply) {
-            return back()->with('error', 'Please wait for landlord\'s response before sending another message.');
-        }
-    
-        $validated = $request->validate([
-            'message' => ['required', 'string', 'max:150']
-        ]);
-    
-        $inquiry->messages()->create([
-            'message' => $validated['message'],
-            'is_landlord' => false,
-            'created_at' => now()
-        ]);
-    
-        return back()->with('success', 'Message sent successfully');
     }
 }

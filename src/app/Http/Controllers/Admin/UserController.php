@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use App\Enums\RejectionRemark;
 
 class UserController extends Controller
 {
@@ -91,29 +91,31 @@ public function toggleArchive(User $user)
 
 
     public function approvePermit(User $user)
-    {
-        if (!$user->landlord) {
-            abort(404);
-        }
-    
-        try {
-            DB::beginTransaction();
-            
-            $user->landlord->update([
-                'approval_status' => ApprovalStatus::APPROVED,
-                'rejection_remark' => null
-            ]);
-    
-            DB::commit();
-      
-            // Change to back() instead of redirect to stay on current page
-            return back()->with('success', 'Business permit approved successfully');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Permit approval failed: ' . $e->getMessage());
-            return back()->with('error', 'Failed to approve business permit: ' . $e->getMessage());
-        }
+{
+    if (!$user->landlord) {
+        abort(404);
     }
+
+    try {
+        DB::beginTransaction();
+        
+        $user->landlord->update([
+            'approval_status' => ApprovalStatus::APPROVED,
+            'rejection_remark' => null
+        ]);
+
+        DB::commit();
+  
+        return back()->with('success', 'Business permit approved successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Permit approval failed', [
+            'user_id' => $user->id,
+            'error' => $e->getMessage()
+        ]);
+        return back()->with('error', 'Failed to approve business permit.');
+    }
+}
 
 
 public function rejectPermit(Request $request, User $user)
@@ -123,7 +125,7 @@ public function rejectPermit(Request $request, User $user)
     }
 
     $request->validate([
-        'rejection_remark' => 'required|string|max:255'
+        'rejection_remark' => ['required', 'string', 'in:' . implode(',', array_column(RejectionRemark::cases(), 'value'))]
     ]);
 
     try {
@@ -136,13 +138,43 @@ public function rejectPermit(Request $request, User $user)
 
         DB::commit();
   
-        return redirect()->route('admin.users.edit', $user)
-                        ->with('success', 'Business permit rejected successfully');
+        return back()->with('success', 'Business permit rejected successfully.');
     } catch (\Exception $e) {
         DB::rollBack();
-        \Log::error('Permit rejection failed: ' . $e->getMessage());
-        return redirect()->route('admin.users.edit', $user)
-                        ->with('error', 'Failed to reject business permit: ' . $e->getMessage());
+        Log::error('Permit rejection failed', [
+            'user_id' => $user->id,
+            'error' => $e->getMessage()
+        ]);
+        return back()->with('error', 'Failed to reject business permit.');
     }
 }
+
+public function resetPermitStatus(User $user)
+{
+    if (!$user->landlord) {
+        abort(404);
+    }
+
+    try {
+        DB::beginTransaction();
+        
+        $user->landlord->update([
+            'approval_status' => ApprovalStatus::PENDING,
+            'rejection_remark' => null
+        ]);
+
+        DB::commit();
+  
+        return back()->with('success', 'Business permit status reset successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Permit status reset failed', [
+            'user_id' => $user->id,
+            'error' => $e->getMessage()
+        ]);
+        return back()->with('error', 'Failed to reset business permit status.');
+    }
+}
+
+
 }

@@ -24,6 +24,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'contact_number',
         'role',
         'is_archived',
+          'address',        
+    'email_verified_at',
     ];
 
     /**
@@ -34,9 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     */
+
     protected function casts(): array
     {
         return [
@@ -61,6 +61,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->role === 'landlord';
     }
+public function isAdmin(): bool
+{
+    return $this->role === 'admin';
+}
     public function getApprovalStatus(): string
     {
         return $this->landlord?->approval_status ?? ApprovalStatus::PENDING->value;
@@ -77,6 +81,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->getApprovalStatus() === ApprovalStatus::REJECTED->value;
     }
+    
     public function scopeTenants($query)
     {
         return $query->where('role', 'tenant');
@@ -99,4 +104,6 @@ public function receivedInquiries()
 {
     return $this->hasMany(Inquiry::class, 'landlord_id');
 }
+
+
 }

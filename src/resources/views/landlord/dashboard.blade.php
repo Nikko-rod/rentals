@@ -1,162 +1,101 @@
-@extends('layouts.dashboard')
+@extends('layouts.final-dashboard')
 
-@section('title', 'Landlord Dashboard | Rentals Tacloban')
+@section('title', 'Landlord Dashboard')
+@section('dashboard-title', 'Landlord Portal')
+@section('page-title', 'Dashboard')
 
-@section('styles')
-<style>
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
+@section('sidebar-menu')
+    <a href="{{ route('landlord.dashboard') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 
+              {{ Request::routeIs('landlord.dashboard') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-home w-5"></i>
+        <span>Dashboard</span>
+    </a>
+    
+    <a href="{{ route('landlord.properties.index') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('landlord.properties.index') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-building w-5"></i>
+        <span>Properties</span>
+    </a>
 
-    .stat-card {
-        background: var(--white);
-        padding: 1.5rem;
-        border-radius: 1rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease;
-    }
+    <a href="{{ route('landlord.inquiries.index') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('landlord.inquiries.index') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-message w-5"></i>
+        <span>Inquiries</span>
+    </a>
 
-    .stat-card:hover {
-        transform: translateY(-2px);
-    }
-
-    .stat-icon {
-        width: 48px;
-        height: 48px;
-        background: var(--primary);
-        color: var(--white);
-        border-radius: 0.75rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1rem;
-        font-size: 1.25rem;
-    }
-
-    .stat-value {
-        font-size: 1.875rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 0.25rem;
-    }
-
-    .stat-label {
-        color: var(--text-light);
-        font-size: 0.875rem;
-    }
-
-    .recent-activity {
-        background: var(--white);
-        border-radius: 1rem;
-        padding: 1.5rem;
-        margin-top: 2rem;
-    }
-
-    .activity-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .activity-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--text-dark);
-    }
-
-    .activity-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .activity-item {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background: var(--secondary);
-    }
-
-    .activity-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: var(--primary);
-        color: var(--white);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-</style>
-@endsection
-
-@section('sidebar')
-        <li class="nav-item">
-            <a href="{{ route('landlord.dashboard') }}" class="nav-link active">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
-        <li class="nav-item">
-        <a href="{{ route('landlord.properties.index') }}" class="nav-link">
-                <i class="fas fa-building"></i>
-                <span>Properties</span>
-            </a>
-        </li>
-        <li class="nav-item">
-        <a href="{{ route('landlord.inquiries.index') }}" class="nav-link">
-            <i class="fas fa-message"></i>
-            <span>Inquiries</span>
-        </a>
-    </li>
-        <li class="nav-item">
-          <a href="{{ route('landlord.profile') }}" class="nav-link {{ Request::routeIs('landlord.profile') ? 'active' : '' }}">
-        <i class="fas fa-user-circle"></i>
+    <a href="{{ route('landlord.profile') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('landlord.profile') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-user-circle w-5"></i>
         <span>Profile</span>
-          </a>    
-        </li>
-
+    </a>
 @endsection
 
 @section('content')
-<h1 class="dashboard-title">Welcome back, {{ auth()->user()->first_name }}! 👋</h1>
-
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-icon">
-            <i class="fas fa-building"></i>
-        </div>
-        <div class="stat-value">0</div>
-        <div class="stat-label">Listed Properties</div>
-    </div>
-    
-    
-    <div class="stat-card">
-        <div class="stat-icon">
-            <i class="fas fa-message"></i>
-        </div>
-        <div class="stat-value">0</div>
-        <div class="stat-label">Unread Messages</div>
-    </div>
-</div>
-
-<div class="recent-activity">
-    <div class="activity-header">
-        <h2 class="activity-title">Recent Activity</h2>
-    </div>
-    <div class="activity-list">
-        <div class="activity-item">
-            <div class="activity-icon">
-                <i class="fas fa-info"></i>
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Properties Card -->
+        <div class="bg-white rounded-xl shadow-sm p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+            <div class="flex items-center gap-4">
+                <div class="bg-indigo-100 p-4 rounded-lg transition-colors duration-300 hover:bg-indigo-200">
+                    <i class="fas fa-building text-indigo-600 text-xl transition-transform duration-300 hover:scale-110"></i>
+                </div>
+                <div>
+                    <p class="text-gray-600 text-sm">Listed Properties</p>
+                    <h3 class="text-2xl font-bold">{{ auth()->user()->properties()->count() }}</h3>
+                </div>
             </div>
-            <div>No recent activity to show.</div>
+        </div>
+
+        <!-- Unread Inquiries Card -->
+        <div class="bg-white rounded-xl shadow-sm p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-100 p-4 rounded-lg transition-colors duration-300 hover:bg-blue-200">
+                    <i class="fas fa-message text-blue-600 text-xl transition-transform duration-300 hover:scale-110"></i>
+                </div>
+                <div>
+                    <p class="text-gray-600 text-sm">Unread Inquiries</p>
+                    <h3 class="text-2xl font-bold">
+                        {{ auth()->user()->receivedInquiries()->whereNull('read_at')->count() }}
+                    </h3>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Recent Inquiries Section -->
+    @if(auth()->user()->receivedInquiries()->count() > 0)
+        <div class="bg-white rounded-xl shadow-sm p-6 transition-all duration-300 hover:shadow-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Recent Inquiries</h2>
+                <a href="{{ route('landlord.inquiries.index') }}" class="text-blue-600 hover:text-blue-700 text-sm">
+                    View all
+                </a>
+            </div>
+            
+            <div class="space-y-4">
+                @foreach(auth()->user()->receivedInquiries()->latest()->take(5)->get() as $inquiry)
+                    <div class="flex items-center gap-4 p-3 rounded-lg transition-all duration-300 hover:bg-gray-50 hover:shadow-md">
+                        <div class="bg-blue-100 p-3 rounded-lg transition-colors duration-300 hover:bg-blue-200">
+                            <i class="fas fa-message text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-semibold">{{ $inquiry->property->title }}</h4>
+                                @if(!$inquiry->read_at)
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                        New
+                                    </span>
+                                @endif
+                            </div>
+                            <p class="text-sm text-gray-500">{{ $inquiry->created_at->diffForHumans() }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
 @endsection

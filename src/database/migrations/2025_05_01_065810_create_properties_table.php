@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('contact_number', 11);
             $table->enum('available_for', ['male', 'female', 'couples', 'any']);
             $table->enum('type', ['bedspace', 'house', 'room', 'apartment']);
-            $table->string('address');
             $table->decimal('monthly_rent', 10, 2);
             $table->timestamps();
         });

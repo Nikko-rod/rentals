@@ -1,206 +1,168 @@
-@extends('layouts.dashboard')
+@extends('layouts.final-dashboard')
 
-@section('title', 'Browse Properties | Rentals Tacloban')
+@section('title', 'Browse Properties')
+@section('dashboard-title', 'Tenant Portal')
+@section('page-title', 'Available Properties')
 
-@section('sidebar')
-    <li class="nav-item">
-        <a href="{{ route('tenant.dashboard') }}" class="nav-link">
-            <i class="fas fa-home"></i>
-            <span>Dashboard</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="{{ route('tenant.properties.index') }}" class="nav-link active">
-            <i class="fas fa-search"></i>
-            <span>Browse Properties</span>
-        </a>
-    </li>
-    <li class="nav-item">
-    <a href="{{ route('tenant.inquiries.index') }}" class="nav-link">
-        <i class="fas fa-message"></i>
+@section('sidebar-menu')
+    <a href="{{ route('tenant.dashboard') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 
+              {{ Request::routeIs('tenant.dashboard') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-home w-5"></i>
+        <span>Dashboard</span>
+    </a>
+    
+    <a href="{{ route('tenant.properties.index') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('tenant.properties.*') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-search w-5"></i>
+        <span>Browse Properties</span>
+    </a>
+
+    <a href="{{ route('tenant.inquiries.index') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('tenant.inquiries.*') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-message w-5"></i>
         <span>Inquiries</span>
     </a>
-</li>
-    <li class="nav-item">
-          <a href="{{ route('tenant.profile') }}" class="nav-link {{ Request::routeIs('tenant.profile') ? 'active' : '' }}">
-        <i class="fas fa-user-circle"></i>
+
+    <a href="{{ route('tenant.profile') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('tenant.profile') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-user-circle w-5"></i>
         <span>Profile</span>
-          </a>    
-        </li>
+    </a>
 @endsection
 
 @section('content')
-<div class="content-card">
-    <!-- Search and Filter Section -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-        
-        <form action="{{ route('tenant.properties.index') }}" method="GET" style="display: flex; gap: 1rem;">
+    <!-- Search and Filters -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <form action="{{ route('tenant.properties.index') }}" method="GET" 
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <!-- Search Input -->
-            <input type="text" 
-                   name="search" 
-                   value="{{ request('search') }}" 
-                   placeholder="Search properties..."
-                   style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; width: 200px;">
+            <div class="lg:col-span-2">
+                <input type="text" 
+                       name="search" 
+                       value="{{ request('search') }}" 
+                       placeholder="Search properties..."
+                       class="w-full rounded-lg border-gray-300 focus:border-green-500 p-2 focus:ring focus:ring-green-200">
+            </div>
 
             <!-- Property Type Filter -->
-            <select name="type" 
-                    style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem;">
-                <option value="">All Types</option>
-                <option value="bedspace" {{ request('type') == 'bedspace' ? 'selected' : '' }}>Bedspace</option>
-                <option value="room" {{ request('type') == 'room' ? 'selected' : '' }}>Room</option>
-                <option value="apartment" {{ request('type') == 'apartment' ? 'selected' : '' }}>Apartment</option>
-                <option value="house" {{ request('type') == 'house' ? 'selected' : '' }}>House</option>
-            </select>
+            <div>
+                <select name="type" class="w-full rounded-lg border-gray-300 p-2 focus:border-green-500 focus:ring focus:ring-green-200">
+                    <option value="">All Types</option>
+                    <option value="bedspace" {{ request('type') == 'bedspace' ? 'selected' : '' }}>Bedspace</option>
+                    <option value="room" {{ request('type') == 'room' ? 'selected' : '' }}>Room</option>
+                    <option value="apartment" {{ request('type') == 'apartment' ? 'selected' : '' }}>Apartment</option>
+                    <option value="house" {{ request('type') == 'house' ? 'selected' : '' }}>House</option>
+                </select>
+            </div>
 
             <!-- Available For Filter -->
-            <select name="available_for" 
-                    style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem;">
-                <option value="">Available For</option>
-                <option value="male" {{ request('available_for') == 'male' ? 'selected' : '' }}>Male Only</option>
-                <option value="female" {{ request('available_for') == 'female' ? 'selected' : '' }}>Female Only</option>
-                <option value="couples" {{ request('available_for') == 'couples' ? 'selected' : '' }}>Couples</option>
-                <option value="any" {{ request('available_for') == 'any' ? 'selected' : '' }}>Any</option>
-            </select>
+            <div>
+                <select name="available_for" class="w-full rounded-lg border-gray-300 p-2 focus:border-green-500 focus:ring focus:ring-green-200">
+                    <option value="">Available For</option>
+                    <option value="male" {{ request('available_for') == 'male' ? 'selected' : '' }}>Male Only</option>
+                    <option value="female" {{ request('available_for') == 'female' ? 'selected' : '' }}>Female Only</option>
+                    <option value="couples" {{ request('available_for') == 'couples' ? 'selected' : '' }}>Couples</option>
+                    <option value="any" {{ request('available_for') == 'any' ? 'selected' : '' }}>Any</option>
+                </select>
+            </div>
 
             <!-- Sort By Price -->
-            <select name="sort" 
-                    style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem;">
-                <option value="">Sort By Price</option>
-                <option value="highest" {{ request('sort') == 'highest' ? 'selected' : '' }}>Highest to Lowest</option>
-                <option value="lowest" {{ request('sort') == 'lowest' ? 'selected' : '' }}>Lowest to Highest</option>
-            </select>
+            <div class="flex items-center gap-2">
+                <select name="sort" class="w-full rounded-lg border-gray-300 p-2 focus:border-green-500 focus:ring focus:ring-green-200">
+                    <option value="">Sort By Price</option>
+                    <option value="highest" {{ request('sort') == 'highest' ? 'selected' : '' }}>Highest to Lowest</option>
+                    <option value="lowest" {{ request('sort') == 'lowest' ? 'selected' : '' }}>Lowest to Highest</option>
+                </select>
 
-            <button type="submit" 
-                    style="padding: 0.75rem; background: var(--primary); color: var(--white); border: none; border-radius: 0.5rem; width: 45px;">
-                <i class="fas fa-search"></i>
-            </button>
+                <button type="submit" 
+                        class="p-2.5 bg-green-700 text-white rounded-lg hover:bg-green-800 p-2 transition duration-300">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
         </form>
     </div>
 
     <!-- Properties Grid -->
     @if($properties->count() > 0)
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @foreach($properties as $property)
-            <div class="property-card" onclick="window.location.href='{{ route('tenant.properties.show', $property) }}'">
-            
-            
-            <div class="inquiry-btn" 
-         onclick="event.stopPropagation(); alert('Inquiry feature coming soon!');" 
-         title="Send Inquiry">
-        <i class="fas fa-paper-plane"></i>
-    </div>
-            
-            
-            <!-- Property Image -->
-                    <div style="position: relative; padding-top: 60%;">
-                    @if($property->images->count() > 0)
-                        <img src="{{ Storage::url($property->images->first()->image_path) }}" 
-                             alt="{{ $property->title }}"
-                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-                    @else
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--secondary); display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-home" style="font-size: 2rem; color: var(--text-light);"></i>
-                        </div>
-                    @endif
-                </div>
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <!-- Property Image -->
+                    <div class="relative h-48">
+                        @if($property->images->count() > 0)
+                            <img src="{{ Storage::url($property->images->first()->image_path) }}" 
+                                 alt="{{ $property->title }}"
+                                 class="w-full h-full object-cover"
+                                 loading="lazy">
+                        @else
+                            <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-home text-gray-400 text-3xl"></i>
+                            </div>
+                        @endif
+
+       
+                    
+                        <!-- Property Status -->
+                                            <div class="absolute bottom-2 left-2">
+                        @if($property->is_available)
+                            <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                                Available
+                            </span>
+                        @else
+                            <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">
+                                Not Available
+                            </span>
+                        @endif
+                    </div>  
+                    </div>
 
                     <!-- Property Details -->
-                <div style="padding: 1rem;">
-                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;" title="{{ $property->title }}">
-                        {{ \Illuminate\Support\Str::limit($property->title, 25, '...') }}
-                    </h3>
-                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">₱{{ number_format($property->monthly_rent, 2) }}/month</p>
-                    
-                    <div style="display: flex; gap: 1rem;">
-                        <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: var(--text-light); font-size: 0.875rem;">
-                            <i class="fas fa-home"></i> {{ ucfirst($property->type) }}
-                        </span>
-                        <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: var(--text-light); font-size: 0.875rem;">
-                            <i class="fas fa-users"></i> {{ ucfirst($property->available_for) }}
-                        </span>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-gray-800 truncate flex-1" title="{{ $property->title }}">
+                                {{ $property->title }}
+                            </h3>
+                            <p class="text-green-700 font-semibold whitespace-nowrap ml-2">
+                                ₱{{ number_format($property->monthly_rent) }}/mo
+                            </p>
+                        </div>
+
+                        <div class="flex flex-wrap gap-4 mt-3">
+                            <span class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-home mr-1 text-gray-400"></i>
+                                {{ ucfirst($property->type) }}
+                            </span>
+                            <span class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-users mr-1 text-gray-400"></i>
+                                {{ ucfirst($property->available_for) }}
+                            </span>
+                        </div>
+
+                        <!-- View Details Link -->
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            <a href="{{ route('tenant.properties.show', $property) }}" 
+                               class="w-full inline-flex items-center justify-center px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition duration-300">
+                                <i class="fas fa-eye mr-2"></i>
+                                View Details
+                            </a>
+                        </div>
                     </div>
-                </div>
                 </div>
             @endforeach
         </div>
 
-        <div style="margin-top: 2rem;">
-            {{ $properties->links() }}
+        <!-- Pagination -->
+        <div class="mt-6">
+            {{ $properties->links() }} 
         </div>
     @else
-        <div style="text-align: center; padding: 3rem 0;">
-            <i class="fas fa-search" style="font-size: 3rem; color: var(--text-light); margin-bottom: 1rem;"></i>
-            <p style="color: var(--text-light);">No properties found matching your criteria</p>
+        <div class="text-center py-12 bg-white rounded-xl shadow-sm">
+            <i class="fas fa-search text-gray-400 text-5xl mb-4"></i>
+            <p class="text-gray-600">No properties found matching your criteria</p>
         </div>
     @endif
-</div>
-@endsection
-
-@section('styles')
-<style>
-    .property-card {
-        background: var(--white);
-        border-radius: 0.5rem;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-    }
-
-    .property-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    }
-
-    .property-card:active {
-        transform: translateY(-2px);
-    }
-
-    .property-card::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255,255,255,0.1);
-        opacity: 0;
-        transition: opacity 0.2s ease;
-    }
-
-    .property-card:hover::after {
-        opacity: 1;
-    }
-    .inquiry-btn {
-        position: absolute;
-        bottom: 1rem;   
-        right: 1rem;
-        width: 35px;
-        height: 35px;
-        background: var(--primary);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--white);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        z-index: 2;
-        opacity: 0;         
-    }
-
-    .property-card:hover .inquiry-btn {
-        opacity: 1;     
-    }
-
-    .inquiry-btn:hover {
-        transform: scale(1.1);
-        background: var(--primary-dark);
-    }
-
-    .inquiry-btn i {
-        font-size: 1rem;
-    }
-</style>
 @endsection

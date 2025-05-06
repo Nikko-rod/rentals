@@ -1,385 +1,355 @@
-@extends('layouts.dashboard')
+@extends('layouts.final-dashboard')
 
 @section('title', 'Profile | Rentals Tacloban')
+@section('dashboard-title', 'Landlord Portal')
+@section('page-title', 'Dashboard')
 
-@section('styles')
-<style>
-    .profile-container {
-        max-width: 768px;
-        margin: 0 auto;
-        padding: 1.5rem;
-    }
 
-    .card {
-        background: var(--white);
-        border-radius: 0.75rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .form-input {
-        width: 100%;
-        padding: 0.625rem;
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        transition: all 0.2s ease;
-    }
-
-    .form-input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(20, 83, 45, 0.1);
-    }
-
-    .form-label {
-        display: block;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--text-dark);
-        margin-bottom: 0.5rem;
-    }
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .status-pending {
-        background: #fff7ed;
-        color: #c2410c;
-        border: 1px solid #fed7aa;
-    }
-
-    .status-approved {
-        background: #f0fdf4;
-        color: #15803d;
-        border: 1px solid #bbf7d0;
-    }
-
-    .status-rejected {
-        background: #fef2f2;
-        color: #dc2626;
-        border: 1px solid #fecaca;
-    }
-
-    .upload-area {
-        border: 2px dashed var(--border);
-        border-radius: 0.75rem;
-        padding: 2rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .upload-area:hover {
-        border-color: var(--primary);
-        background: var(--secondary);
-    }
-
-    .btn-primary {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.625rem 1rem;
-        background: var(--primary);
-        color: var(--white);
-        border: none;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .btn-primary:hover {
-        background: var(--primary-light);
-    }
-
-    .btn-primary:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .error-text {
-        color: var(--danger);
-        font-size: 0.75rem;
-        margin-top: 0.25rem;
-    }
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.375rem 0.75rem;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .status-badge i {
-        font-size: 0.875rem;
-    }
-
-    .text-danger {
-        color: var(--danger);
-    }
-</style>
-@endsection
-
-@section('sidebar')
-<li class="nav-item">
-    <a href="{{ route('landlord.dashboard') }}" class="nav-link {{ Request::routeIs('landlord.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-chart-line"></i>
+@section('sidebar-menu')
+    <a href="{{ route('landlord.dashboard') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('landlord.dashboard') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-home w-5"></i>
         <span>Dashboard</span>
     </a>
-</li>
-<li class="nav-item">
-<a href="{{ route('landlord.properties.index') }}" class="nav-link">
-                <i class="fas fa-building"></i>
-                <span>Properties</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="fas fa-message"></i>
-                <span>Inquiries</span>
-            </a>
-        </li>
-<li class="nav-item">
-    <a href="{{ route('landlord.profile') }}" class="nav-link {{ Request::routeIs('landlord.profile') ? 'active' : '' }}">
-        <i class="fas fa-user-circle"></i>
+
+    <a href="{{ route('landlord.properties.index') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('landlord.properties.*') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-building w-5"></i>
+        <span>Properties</span>
+    </a>
+
+    <a href="{{ route('landlord.inquiries.index') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('landlord.inquiries.*') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-message w-5"></i>
+        <span>Inquiries</span>
+    </a>
+
+    <a href="{{ route('landlord.profile') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('landlord.profile') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-user-circle w-5"></i>
         <span>Profile</span>
     </a>
-</li>
 @endsection
 
 @section('content')
-<div class="profile-container">
+<div class="max-w-3xl mx-auto space-y-6">
     <!-- Profile Information -->
-    <div class="card">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold">Profile Information</h2>
-            
-        </div>
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-semibold text-gray-800">Profile Information</h2>
+            </div>
 
-        <form action="{{ route('landlord.profile.update') }}" method="POST">
-            @csrf
-            @method('PATCH')
-            
-            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
-                <div class="space-y-1">
-                    <label for="first_name" class="form-label">First Name</label>
-                    <input type="text" 
-                           name="first_name" 
-                           id="first_name" 
-                           value="{{ old('first_name', $user->first_name) }}" 
-                           class="form-input"
-                           required>
-                    @error('first_name')
-                        <p class="error-text">{{ $message }}</p>
+            <form action="{{ route('landlord.profile.update') }}" method="POST" class="space-y-6">
+                @csrf
+                @method('PATCH')
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+                        <input type="text" 
+                               name="first_name" 
+                               id="first_name" 
+                               value="{{ old('first_name', $user->first_name) }}" 
+                               class="mt-1 block w-full rounded-lg border-gray-300 p-2 shadow-sm focus:border-green-500 focus:ring-green-500"
+                               pattern="[A-Za-z\s]+"
+                               title="Please enter letters only"
+                               required>
+                        @error('first_name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                        <input type="text" 
+                               name="last_name" 
+                               id="last_name" 
+                               value="{{ old('last_name', $user->last_name) }}" 
+                               class="mt-1 block w-full rounded-lg border-gray-300 p-2 shadow-sm focus:border-green-500 focus:ring-green-500"
+                               pattern="[A-Za-z\s]+"
+                               title="Please enter letters only"
+                               required>
+                        @error('last_name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="contact_number" class="block text-sm font-medium text-gray-700">Contact Number</label>
+                    <div class="relative">
+                        <input type="tel" 
+                               name="contact_number" 
+                               id="contact_number" 
+                               value="{{ old('contact_number', $user->contact_number) }}" 
+                               class="block w-full rounded-lg border-gray-300 p-2 shadow-sm focus:border-green-500 focus:ring-green-500"
+                               pattern="[0-9]{11}"
+                               title="Please enter exactly 11 digits"
+                               maxlength="11"
+                               required>
+                    </div>
+                    @error('contact_number')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="space-y-1">
-                    <label for="last_name" class="form-label">Last Name</label>
-                    <input type="text" 
-                           name="last_name" 
-                           id="last_name" 
-                           value="{{ old('last_name', $user->last_name) }}" 
-                           class="form-input"
-                           required>
-                    @error('last_name')
-                        <p class="error-text">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
-
-            <div class="space-y-1 mt-4">
-                <label for="contact_number" class="form-label">Contact Number</label>
-                <input type="tel" 
-                       name="contact_number" 
-                       id="contact_number" 
-                       value="{{ old('contact_number', $user->contact_number) }}" 
-                       class="form-input"
-                       required>
-                @error('contact_number')
-                    <p class="error-text">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="border-t mt-6 pt-6">
-                <div class="space-y-1">
-                    <label for="current_password" class="form-label">Current Password to Confirm Changes</label>
+                <div class="pt-6 border-t border-gray-200 space-y-2">
+                    <label for="current_password" class="block text-sm font-medium text-gray-700">
+                        Current Password to Confirm Changes
+                    </label>
                     <input type="password" 
                            name="current_password" 
                            id="current_password" 
-                           class="form-input"
+                           class="mt-1 block w-full rounded-lg border-gray-300 p-2 shadow-sm focus:border-green-500 focus:ring-green-500"
                            required>
                     @error('current_password')
-                        <p class="error-text">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
-            </div>
 
-            <div class="flex justify-end mt-6">
-                <button type="submit" class="btn-primary">
-                    <i class="fas fa-save"></i>
-                    <span>Save Changes</span>
-                </button>
-            </div>
-        </form>
-    </div>
-
-<!-- Replace the existing Business Permit section with this -->
-<div class="card">
-    <h2 class="text-xl font-bold mb-6">Business Permit</h2>
-
-    <!-- Status and Remarks Container -->
-    <div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
-        <div class="flex flex-col space-y-4">
-            <!-- Status -->
-            <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-600">Verification Status : </span>
-                <div class="status-badge {{ $user->landlord->approval_status->getColor() }}">
-                    <i class="fas {{ 
-                        $user->landlord->isApproved() ? 'fa-check-circle' : 
-                        ($user->landlord->isPending() ? 'fa-clock' : 'fa-times-circle') 
-                    }}"></i>
-                    <span>{{ $user->landlord->approval_status->label() }}</span>
+                <div class="flex justify-end pt-6">
+                    <button type="submit" 
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition duration-300">
+                        <i class="fas fa-save"></i>
+                        <span>Save Changes</span>
+                    </button>
                 </div>
-            </div>
-
-            <!-- Rejection Remarks -->
-            @if($user->landlord->isRejected() && $user->landlord->rejection_remark)
-    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
-        <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
-            <div style="flex-shrink: 0;">
-                <i class="fas fa-exclamation-circle" style="color: #dc2626;"></i>
-            </div>
-            <div>
-                <span style="display: block; font-size: 0.875rem; color: #4b5563; margin-bottom: 0.25rem;">
-                    Rejection Reason:
-                </span>
-                <p style="color: #dc2626; font-weight: 500;">
-                    {{ $user->landlord->getRejectionMessage() }}
-                </p>
-            </div>
-        </div>
-    </div>
-@endif
-
-            <!-- Last Updated -->
-            
+            </form>
         </div>
     </div>
 
-    <!-- Current Permit -->
-    @if($user->landlord->permits)
-        <div class="bg-secondary rounded-lg p-4 mb-6 border border-gray-200">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-file-pdf text-primary"></i>
-                    <span class="font-medium">Current Business Permit</span>
+    <!-- Business Permit Card -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-6">Business Permit</h2>
+
+            <!-- Status Section -->
+            <div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-100">
+                <div class="flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Verification Status:</span>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium
+                            {{ $user->landlord->isApproved() ? 'bg-green-100 text-green-800' : 
+                               ($user->landlord->isPending() ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                            {{ $user->landlord->approval_status->label() }}
+                        </span>
+                    </div>
+
+                    @if($user->landlord->isRejected() && $user->landlord->rejection_remark)
+                        <div class="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-100">
+                            <i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i>
+                            <div class="flex-1">
+                                <span class="block text-sm text-gray-600 mb-1">Rejection Reason:</span>
+                                <p class="text-red-600 font-medium">{{ $user->landlord->getRejectionMessage() }}</p>
+                            </div>
+                        </div>
+                    @endif
                 </div>
-                <a href="{{ Storage::url($user->landlord->permits) }}" 
-                   target="_blank" 
-                   class="text-primary hover:underline inline-flex items-center gap-2">
-                    <span>View</span>
-                    <i class="fas fa-external-link-alt text-sm"></i>
-                </a>
+            </div>
+
+            <!-- Current Permit -->
+            @if($user->landlord->permits)
+                <div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-file-pdf text-green-600"></i>
+                            <span class="font-medium text-gray-700">Current Business Permit</span>
+                        </div>
+                        <a href="{{ Storage::url($user->landlord->permits) }}" 
+                           target="_blank" 
+                           class="text-green-700 hover:text-green-800 inline-flex items-center gap-2">
+                            <span>View</span>
+                            <i class="fas fa-external-link-alt text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+            @endif
+
+         <!-- Upload Form -->
+<form action="{{ route('landlord.profile.upload-permit') }}" 
+      method="POST" 
+      enctype="multipart/form-data" 
+      id="permitForm"
+      class="space-y-4">
+    @csrf
+    
+    @if($user->landlord->isRejected())
+<div class="border-2 border-dashed border-gray-200 rounded-lg hover:border-green-500 transition-colors">
+    <div id="dropZone" 
+         class="p-6 text-center transition-all duration-200 cursor-pointer">
+        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3 block"></i>
+        <p class="font-medium text-gray-700 mb-1">Drop your business permit here</p>
+        <p class="text-sm text-gray-500">or click to browse</p>
+        <p class="text-xs text-gray-400 mt-1">PDF files only, max 2MB</p>
+        <input type="file" 
+               name="business_permit" 
+               accept=".pdf" 
+               class="hidden" 
+               id="permit-input">
+    </div>
+</div>
+    @elseif($user->landlord->isPending())
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div class="flex items-center gap-2 text-yellow-800">
+                <i class="fas fa-clock"></i>
+                <p>Please wait for your current permit to be reviewed.</p>
+            </div>
+        </div>
+    @elseif($user->landlord->isApproved())
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div class="flex items-center gap-2 text-green-800">
+                <i class="fas fa-check-circle"></i>
+                <p>Your business permit is verified.</p>
             </div>
         </div>
     @endif
 
-        <form action="{{ route('landlord.profile.upload-permit') }}" 
-              method="POST" 
-              enctype="multipart/form-data" 
-              id="permitForm">
-            @csrf
-            <div class="upload-area" id="dropZone">
-                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
-                <p class="font-medium mb-1">Drop your business permit here</p>
-                <p class="text-sm text-gray-500">PDF files only, max 2MB</p>
-                <input type="file" 
-                       name="business_permit" 
-                       accept=".pdf" 
-                       class="hidden" 
-                       id="permit-input">
-            </div>
-
-            <div class="hidden mt-4 p-3 bg-secondary rounded-lg" id="fileInfo">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-file-pdf text-primary"></i>
-                        <span id="fileName" class="text-sm font-medium">No file selected</span>
-                    </div>
-                </div>
-            </div>
-
-            <button type="submit" 
-                    class="btn-primary w-full mt-4" 
-                    id="submitBtn" 
-                    disabled>
-                <i class="fas fa-upload"></i>
-                <span>Upload Permit</span>
-            </button>
-        </form>
+    <div class="hidden" id="fileInfo">
+    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
+        <div class="flex items-center gap-2">
+            <i class="fas fa-file-pdf text-green-600"></i>
+            <span id="fileName" class="text-sm font-medium text-gray-700">No file selected</span>
+        </div>
+        <button type="button" 
+                onclick="clearFile()"
+                class="text-gray-400 hover:text-red-500 transition-colors">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 </div>
-@endsection
 
-@section('scripts')
+<button type="submit" 
+        id="submitBtn"
+        class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled>
+    <i class="fas fa-upload"></i>
+    <span>Upload Permit</span>
+</button>
+</form>
+
+
+
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Get DOM elements
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('permit-input');
     const fileInfo = document.getElementById('fileInfo');
     const fileName = document.getElementById('fileName');
-    const removeFile = document.getElementById('removeFile');
     const submitBtn = document.getElementById('submitBtn');
 
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = 'var(--primary)';
-        dropZone.style.background = 'var(--secondary)';
+    // Exit if not in rejected state
+    if (!dropZone || !fileInput) return;
+
+    // Initialize click handling
+    dropZone.addEventListener('click', function(e) {
+        if (e.target !== fileInput) {
+            fileInput.click();
+        }
     });
 
-    dropZone.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = 'var(--border)';
-        dropZone.style.background = 'var(--white)';
+    // File input change handler
+    fileInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files.length) {
+            processFile(files[0]);
+        }
     });
 
-    dropZone.addEventListener('drop', (e) => {
+    // Drag and drop handlers
+    dropZone.addEventListener('dragenter', handleDragEnter);
+    dropZone.addEventListener('dragleave', handleDragLeave);
+    dropZone.addEventListener('dragover', handleDragOver);
+    dropZone.addEventListener('drop', handleDrop);
+
+    function handleDragEnter(e) {
         e.preventDefault();
-        handleFiles(e.dataTransfer.files);
-    });
+        dropZone.classList.add('bg-green-50');
+        dropZone.parentElement.classList.add('border-green-500');
+    }
 
-    dropZone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+    function handleDragLeave(e) {
+        e.preventDefault();
+        dropZone.classList.remove('bg-green-50');
+        dropZone.parentElement.classList.remove('border-green-500');
+    }
 
-    function handleFiles(files) {
-        if (files.length > 0) {
-            const file = files[0];
-            if (file.type !== 'application/pdf') {
-                alert('Only PDF files are allowed');
-                return;
-            }
-            if (file.size > 2 * 1024 * 1024) {
-                alert('File size must be less than 2MB');
-                return;
-            }
-            fileName.textContent = file.name;
-            fileInfo.classList.remove('hidden');
-            submitBtn.disabled = false;
+    function handleDragOver(e) {
+        e.preventDefault();
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        dropZone.classList.remove('bg-green-50');
+        dropZone.parentElement.classList.remove('border-green-500');
+
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        if (files.length) {
+            processFile(files[0]);
         }
     }
 
+    function processFile(file) {
+        console.log('Processing file:', file);
+
+        if (file.type !== 'application/pdf') {
+            showError('Only PDF files are allowed');
+            return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            showError('File size must be less than 2MB');
+            return;
+        }
+
+        // Update file input
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+
+        // Update UI
+        fileName.textContent = file.name;
+        fileInfo.classList.remove('hidden');
+        submitBtn.disabled = false;
+    }
+
+    function showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'text-red-600 text-sm mt-2';
+        errorDiv.textContent = message;
+
+        const existingError = dropZone.parentElement.nextElementSibling;
+        if (existingError?.classList.contains('text-red-600')) {
+            existingError.remove();
+        }
+
+        dropZone.parentElement.after(errorDiv);
+        clearFile();
+        
+        setTimeout(() => errorDiv.remove(), 3000);
+    }
+
+    function clearFile() {
+        fileInput.value = '';
+        fileName.textContent = 'No file selected';
+        fileInfo.classList.add('hidden');
+        submitBtn.disabled = true;
+    }
+
+    // Add clear file handler to window
+    window.clearFile = clearFile;
 });
 </script>
+@endpush
+
+
 @endsection
+

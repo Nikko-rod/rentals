@@ -1,128 +1,99 @@
 <?php
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\TenantRegistrationController;
-use App\Http\Controllers\Auth\LandlordRegistrationController;
-use App\Http\Controllers\Auth\VerificationController;
-use App\Http\Controllers\Landlord\LandlordProfileController;
-use App\Http\Controllers\Landlord\PropertyController;
+use App\Http\Controllers\Auth\{
+    ForgotPasswordController,
+    ResetPasswordController,
+    LoginController,
+    TenantRegistrationController,
+    LandlordRegistrationController,
+    VerificationController,
+    LogoutController
+};
+use App\Http\Controllers\Landlord\{
+    LandlordProfileController,
+    PropertyController,
+    InquiryController as LandlordInquiryController
+};
+use App\Http\Controllers\HomeController;
 
-
-Auth::routes(['verify' => true]);
-
+// Auth::routes(['verify' => true]);
 
 Route::get('/', fn () => view('welcome'))->name('home');
 
-Route::get('/login', fn () => view('auth.login'))
-    ->middleware('guest')
-    ->name('login');
-Route::post('/login', [LoginController::class, 'login'])
-    ->middleware('guest')
-    ->name('login.submit');
+// Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login');
+    
+    // Registration Routes
+    Route::prefix('register')->group(function () {
+        Route::get('/tenant', [TenantRegistrationController::class, 'showRegistrationForm'])
+            ->name('register.tenant');
+        Route::post('/tenant', [TenantRegistrationController::class, 'register']);
 
-Route::prefix('register')->group(function () {
- 
-    Route::get('/tenant', [TenantRegistrationController::class, 'showRegistrationForm'])
-        ->middleware('guest')
-        ->name('register.tenant');
-    Route::post('/tenant', [TenantRegistrationController::class, 'register'])
-        ->middleware('guest');
+        Route::get('/landlord', [LandlordRegistrationController::class, 'showRegistrationForm'])
+            ->name('register.landlord');
+        Route::post('/landlord', [LandlordRegistrationController::class, 'register']);
+    });
 
-    Route::get('/landlord', [LandlordRegistrationController::class, 'showRegistrationForm'])
-        ->middleware('guest')
-        ->name('register.landlord');
-    Route::post('/landlord', [LandlordRegistrationController::class, 'register'])
-        ->middleware('guest');
+    // Password Reset Routes
+    Route::prefix('password')->group(function () {
+        Route::get('/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])
+            ->name('password.request');
+        Route::post('/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+            ->name('password.email');
+        Route::get('/reset/{token}', [ResetPasswordController::class, 'showResetForm'])
+            ->name('password.reset');
+        Route::post('/reset', [ResetPasswordController::class, 'reset'])
+            ->name('password.update');
+    });
 });
 
-Route::prefix('password')->group(function () {
-    Route::get('/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])
-        ->middleware('guest')
-        ->name('password.request');
-    Route::post('/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])
-        ->middleware('guest')
-        ->name('password.email');
-    Route::get('/reset/{token}', [ResetPasswordController::class, 'showResetForm'])
-        ->middleware('guest')
-        ->name('password.reset');
-    Route::post('/reset', [ResetPasswordController::class, 'reset'])
-        ->middleware('guest')
-        ->name('password.update');
-});
-
+// Email Verification Routes
 Route::prefix('email')->group(function () {
     Route::get('/verify', [VerificationController::class, 'show'])
-        ->middleware(['auth'])
+        ->middleware('auth')
         ->name('verification.notice');
-        
     Route::get('/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+        ->middleware('signed')
         ->name('verification.verify');
-        
     Route::post('/verification-notification', [VerificationController::class, 'resend'])
         ->middleware(['auth', 'throttle:6,1'])
         ->name('verification.resend');
 });
 
+// Authenticated Routes
 Route::middleware(['auth', 'verified'])->group(function () {
- 
-    //landlord
+    // Landlord Routes
     Route::prefix('landlord')->middleware('role:landlord')->group(function () {
-        Route::get('/dashboard', fn () => view('landlord.dashboard'))
-            ->name('landlord.dashboard');
-            Route::get('/profile', [LandlordProfileController::class, 'show'])->name('landlord.profile');
-            Route::post('/profile/upload-permit', [LandlordProfileController::class, 'uploadPermit'])
-                 ->name('landlord.profile.upload-permit');
-            Route::patch('/landlord/profile', [LandlordProfileController::class, 'update'])
-                 ->name('landlord.profile.update');
-         
-       
-    Route::get('/properties', [PropertyController::class, 'index'])
-    ->name('landlord.properties.index');
-    
-Route::get('/properties/create', [PropertyController::class, 'create'])
-    ->name('landlord.properties.create');
-    
-Route::post('/properties', [PropertyController::class, 'store'])
-    ->name('landlord.properties.store');
-    
-Route::get('/properties/{property}/edit', [PropertyController::class, 'edit'])
-    ->name('landlord.properties.edit');
-    
-Route::put('/properties/{property}', [PropertyController::class, 'update'])
-    ->name('landlord.properties.update');
-    
-Route::delete('/properties/{property}', [PropertyController::class, 'destroy'])
-    ->name('landlord.properties.destroy');
-    
-Route::delete('/properties/images/{image}', [PropertyController::class, 'deleteImage'])
-    ->name('landlord.properties.deleteImage');
-    Route::get('/properties/{property}', [PropertyController::class, 'show'])
-    ->name('landlord.properties.show');
+        Route::get('/dashboard', fn () => view('landlord.dashboard'))->name('landlord.dashboard');
+        
+        // Profile Routes
+        Route::get('/profile', [LandlordProfileController::class, 'show'])->name('landlord.profile');
+        Route::patch('/profile', [LandlordProfileController::class, 'update'])->name('landlord.profile.update');
+        Route::post('/profile/upload-permit', [LandlordProfileController::class, 'uploadPermit'])
+            ->name('landlord.profile.upload-permit');
 
-    Route::get('/inquiries', [App\Http\Controllers\Landlord\InquiryController::class, 'index'])
-    ->name('landlord.inquiries.index');
-Route::patch('/inquiries/{inquiry}', [App\Http\Controllers\Landlord\InquiryController::class, 'update'])
-    ->name('landlord.inquiries.update');
-    Route::get('/inquiries/{inquiry}', [App\Http\Controllers\Landlord\InquiryController::class, 'show'])
-    ->name('landlord.inquiries.show');                   
-    Route::post('/inquiries/{inquiry}/reply', [App\Http\Controllers\Landlord\InquiryController::class, 'reply'])
-    ->name('landlord.inquiries.reply');
-    
+        // Property Routes
+        Route::resource('properties', PropertyController::class, ['as' => 'landlord'])
+            ->except('show');
+        Route::get('/properties/{property}', [PropertyController::class, 'show'])
+            ->name('landlord.properties.show');
+        Route::delete('/properties/images/{image}', [PropertyController::class, 'deleteImage'])
+            ->name('landlord.properties.deleteImage');
+
+        // Inquiry Routes
+        Route::get('/inquiries', [LandlordInquiryController::class, 'index'])->name('landlord.inquiries.index');
+        Route::get('/inquiries/{inquiry}', [LandlordInquiryController::class, 'show'])->name('landlord.inquiries.show');
+        Route::patch('/inquiries/{inquiry}', [LandlordInquiryController::class, 'update'])->name('landlord.inquiries.update');
+        Route::post('/inquiries/{inquiry}/reply', [LandlordInquiryController::class, 'reply'])->name('landlord.inquiries.reply');
     });
 });
 
-Route::post('/logout', function (Request $request) {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    
-    return redirect()->route('home')
-        ->with('success', 'You have been logged out successfully.');
-})->middleware('auth')->name('logout');
-
-
+// Logout Route
+Route::post('/logout', [LogoutController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');

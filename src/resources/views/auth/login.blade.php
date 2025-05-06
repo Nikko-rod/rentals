@@ -128,7 +128,7 @@
 
 @section('content')
 <div class="login-container">
-    <form method="POST" action="{{ route('login.submit') }}" class="login-form">
+    <form method="POST" action="{{ route('login') }}" class="login-form">
         @csrf
         
         @error('email')

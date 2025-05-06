@@ -1,165 +1,114 @@
-@extends('layouts.dashboard')
-
+@extends('layouts.final-dashboard')
 @section('title', 'My Inquiries | Rentals Tacloban')
+@section('dashboard-title', 'Tenant Portal')
+@section('page-title', 'Inquiries')
 
-@section('sidebar')
-    <li class="nav-item">
-        <a href="{{ route('tenant.dashboard') }}" class="nav-link">
-            <i class="fas fa-home"></i>
-            <span>Dashboard</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="{{ route('tenant.properties.index') }}" class="nav-link">
-            <i class="fas fa-search"></i>
-            <span>Browse Properties</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="{{ route('tenant.inquiries.index') }}" class="nav-link active">
-            <i class="fas fa-message"></i>
-            <span>Inquiries</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="{{ route('tenant.profile') }}" class="nav-link">
-            <i class="fas fa-user-circle"></i>
-            <span>Profile</span>
-        </a>
-    </li>
+
+@section('sidebar-menu')
+    <a href="{{ route('tenant.dashboard') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('tenant.dashboard') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-home w-5"></i>
+        <span>Dashboard</span>
+    </a>
+
+    <a href="{{ route('tenant.properties.index') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('tenant.properties.*') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-search w-5"></i>
+        <span>Browse Properties</span>
+    </a>
+
+    <a href="{{ route('tenant.inquiries.index') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('tenant.inquiries.*') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-message w-5"></i>
+        <span>Inquiries</span>
+    </a>
+
+    <a href="{{ route('tenant.profile') }}" 
+       class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105
+              {{ Request::routeIs('tenant.profile') ? 'bg-green-700 text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+        <i class="fas fa-user-circle w-5"></i>
+        <span>Profile</span>
+    </a>
 @endsection
-@section('styles')
-<style>
-    .inquiry-list {
-        background: var(--white);
-        border-radius: 0.5rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        padding: 0.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .inquiry-item {
-        padding: 1rem;
-        border-radius: 0.375rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border: 1px solid var(--border-color);
-    }
-
-    .inquiry-item:hover {
-        background: var(--secondary-light);
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        border-color: var(--primary);
-    }
-
-    .inquiry-content {
-        flex: 1;
-    }
-
-    .inquiry-meta {
-        font-size: 0.75rem;
-        color: var(--text-light);
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .status-badge {
-        padding: 0.25rem 0.5rem;
-        border-radius: 1rem;
-        font-size: 0.75rem;
-        font-weight: 500;
-        white-space: nowrap;
-    }
-
-    .message-preview {
-        color: var(--text-light);
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        max-width: 400px;
-        transition: color 0.2s ease;
-    }
-
-    .inquiry-item:hover .message-preview {
-        color: var(--text-dark);
-    }
-
-    .property-meta {
-        display: flex;
-        gap: 1rem;
-        font-size: 0.75rem;
-        color: var(--text-light);
-        margin-top: 0.5rem;
-    }
-</style>
-@endsection
-
-
 
 @section('content')
-<div class="content-card">
-    <div style="margin-bottom: 1rem;">
-        <h1 style="font-size: 1.25rem; font-weight: 600;">My Inquiries</h1>
+<div class="max-w-7xl mx-auto space-y-4">
+    <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm">
+        <h1 class="text-lg font-semibold text-gray-800">My Inquiries</h1>
+        <span class="text-sm text-gray-500">Total: {{ $inquiries->total() }}</span>
     </div>
 
     @if($inquiries->count() > 0)
-
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden divide-y divide-gray-100">
             @foreach($inquiries as $inquiry)
-                <div class="inquiry-item" onclick="window.location.href='{{ route('tenant.inquiries.show', $inquiry) }}'">
-                    <div class="inquiry-content">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h3 style="font-size: 0.875rem; font-weight: 600;">
+                <div class="p-5 hover:bg-gray-50/80 transition-all duration-300 cursor-pointer" 
+                     onclick="window.location.href='{{ route('tenant.inquiries.show', $inquiry) }}'">
+                    <div class="space-y-3">
+                        <!-- Property Title and Date -->
+                        <div class="flex justify-between items-start gap-4">
+                            <h3 class="font-medium text-gray-800 hover:text-green-700 transition-colors">
                                 {{ $inquiry->property->title }}
                             </h3>
-                            <div class="inquiry-meta">
-                                <span>{{ $inquiry->created_at->diffForHumans() }}</span>
-                                <span class="status-badge status-{{ $inquiry->status }}">
-                                    {{ ucfirst($inquiry->status) }}
-                                </span>
-                            </div>
+                            <span class="text-xs text-gray-500 whitespace-nowrap">
+                                {{ $inquiry->created_at->diffForHumans() }}
+                            </span>
                         </div>
 
-                        <p class="message-preview">
+                        <!-- Message Preview -->
+                        <div class=" rounded-lg p-3 text-sm text-gray-600">
                             {{ Str::limit($inquiry->message, 100) }}
-                        </p>
+                        </div>
 
-                        <div class="property-meta">
-                            <span>
-                                <i class="fas fa-peso-sign"></i>
-                                {{ number_format($inquiry->quoted_monthly_rent, 2) }}
-                            </span>
-                            <span>
-                                <i class="fas fa-home"></i>
-                                {{ ucfirst($inquiry->quoted_type) }}
-                            </span>
-                            <span>
-                                <i class="fas fa-phone"></i>
-                                {{ $inquiry->quoted_contact_number }}
-                            </span>
+                        <!-- Property Details -->
+                        <div class="flex flex-wrap items-center gap-3">
+                            <!-- Price -->
+                            <div class="flex items-center gap-2 bg-green-50 text-green-800 text-sm px-3 py-1.5 rounded-lg border border-green-100">
+                                <i class="fas fa-peso-sign text-green-600"></i>
+                                <span class="font-medium">{{ number_format($inquiry->quoted_monthly_rent, 2) }}</span>
+                            </div>
+
+                            <!-- Type -->
+                            <div class="flex items-center gap-2 bg-purple-50 text-purple-800 text-sm px-3 py-1.5 rounded-lg border border-purple-100">
+                                <i class="fas fa-home text-purple-600"></i>
+                                <span>{{ ucfirst($inquiry->quoted_type) }}</span>
+                            </div>
+
+                            <!-- Contact -->
+                            <div class="flex items-center gap-2 bg-blue-50 text-blue-800 text-sm px-3 py-1.5 rounded-lg border border-blue-100">
+                                <i class="fas fa-phone text-blue-600"></i>
+                                <span>{{ $inquiry->quoted_contact_number }}</span>
+                            </div>
+
+                            <!-- View arrow -->
+                            <div class="ml-auto">
+                                <i class="fas fa-chevron-right text-gray-400 group-hover:text-green-600 transition-colors"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             @endforeach
+        </div>
 
-        <div style="margin-top: 1rem;">
+        <!-- Pagination -->
+        <div class="mt-4">
             {{ $inquiries->links() }}
         </div>
     @else
-        <div style="text-align: center; padding: 2rem 0;">
-            <i class="fas fa-message" style="font-size: 2rem; color: var(--text-light); margin-bottom: 0.5rem;"></i>
-            <p style="color: var(--text-light); font-size: 0.875rem;">No inquiries yet</p>
-            <a href="{{ route('tenant.properties.index') }}" class="btn-primary" style="display: inline-block; margin-top: 1rem;">
-                Browse Properties
-            </a>
+        <div class="bg-white rounded-xl shadow-sm p-8 text-center">
+            <div class="flex flex-col items-center gap-3">
+                <div class="w-14 h-14 flex items-center justify-center rounded-full bg-gray-50">
+                    <i class="fas fa-message text-2xl text-gray-400"></i>
+                </div>
+                <p class="text-sm text-gray-500">No inquiries yet</p>
+                <a href="{{ route('tenant.properties.index') }}" 
+                   class="inline-flex items-center justify-center px-4 py-2 bg-green-700 text-white text-sm rounded-lg hover:bg-green-800 transition duration-300">
+                    <i class="fas fa-search mr-2"></i>
+                    Browse Properties
+                </a>
+            </div>
         </div>
     @endif
 </div>

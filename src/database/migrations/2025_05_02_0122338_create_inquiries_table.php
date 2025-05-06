@@ -14,22 +14,17 @@ return new class extends Migration
             $table->foreignId('landlord_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('property_id')->constrained('properties')->onDelete('cascade');
             
-            // Quoted essential property information
+    
             $table->decimal('quoted_monthly_rent', 10, 2);
             $table->string('quoted_type');
             $table->string('quoted_contact_number');
-            
-            // Inquiry specific fields
+    
             $table->text('message');
-            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->text('landlord_response')->nullable();
             $table->timestamp('responded_at')->nullable();
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
             
-            // Add indexes
-            $table->index(['tenant_id', 'status']);
-            $table->index(['landlord_id', 'status']);
             $table->index(['property_id', 'created_at']);
         });
     }
