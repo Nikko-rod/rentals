@@ -16,7 +16,7 @@ class PropertySeeder extends Seeder
         $faker = Faker::create('en_US');
         
     
-        $landlords = User::whereIn('id', range(7, 11))->get();
+        $landlords = User::whereIn('id', range(17, 21))->get();
         
         if ($landlords->isEmpty()) {
             $this->command->error('No landlord users found. Please ensure users with IDs 7-11 exist.');

@@ -13,11 +13,14 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title', 100);
             $table->text('description');
+            $table->string('address', 60);
             $table->string('contact_number', 11);
             $table->enum('available_for', ['male', 'female', 'couples', 'any']);
             $table->enum('type', ['bedspace', 'house', 'room', 'apartment']);
             $table->decimal('monthly_rent', 10, 2);
+            $table->boolean('is_available')->default(true);
             $table->timestamps();
+            
         });
 
         Schema::create('property_images', function (Blueprint $table) {
