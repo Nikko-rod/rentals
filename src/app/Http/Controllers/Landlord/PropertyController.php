@@ -51,16 +51,16 @@ class PropertyController extends Controller
         return view('landlord.properties.create');
     }
 
-    public function store(Request $request)
+   
+public function store(Request $request)
 {
     $request->validate([
         'title' => 'required|string|max:100',
-        'description' => 'required|string|max:2000',
+        'description' => 'required|string|max:5000', // Increased for HTML content
         'contact_number' => 'required|string|regex:/^[0-9]{11}$/',
         'monthly_rent' => 'required|numeric|min:0',
         'type' => 'required|in:bedspace,room,apartment,house',
         'available_for' => 'required|in:male,female,couples,any',
-        'description' => 'required|string|max:500',
         'address' => 'required|string',
         'images.*' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         'images' => 'required|array|min:1|max:5',
@@ -69,11 +69,12 @@ class PropertyController extends Controller
     try {
         DB::beginTransaction();
 
-
-
-        $sanitizedDescription = clean($request->description, [
-            'allowed_tags' => ['p', 'br', 'ul', 'ol', 'li', 'strong', 'em', 'h2', 'h3', 'h4'],
-            'allowed_attributes' => []
+        // Sanitize HTML from Summernote
+        $sanitizedDescription = Purifier::clean($request->description, [
+            'HTML.Allowed' => 'p,b,strong,i,em,u,ul,ol,li,br,h2,h3,h4',
+            'HTML.Nofollow' => true,
+            'HTML.TargetBlank' => true,
+            'AutoFormat.RemoveEmpty' => true,
         ]);
 
         $property = Property::create([
@@ -85,7 +86,7 @@ class PropertyController extends Controller
             'type' => $request->type,
             'available_for' => $request->available_for,
             'address' => $request->address,
-            'is_available' => $request->has('is_available'),
+            'is_available' => true,
         ]);
 
         if ($request->hasFile('images')) {
@@ -97,14 +98,17 @@ class PropertyController extends Controller
             }
         }
 
-        DB::commit();
-
+       DB::commit();
         return redirect()
             ->route('landlord.properties.index')
             ->with('success', 'Property created successfully!');
 
     } catch (\Exception $e) {
         DB::rollBack();
+        \Log::error('Property creation failed', [
+            'error' => $e->getMessage(),
+            'request' => $request->except(['images'])
+        ]);
         return back()
             ->withInput()
             ->with('error', 'Failed to create property. Please try again.');
@@ -120,7 +124,7 @@ class PropertyController extends Controller
     }
 
 
-   public function update(Request $request, Property $property)
+public function update(Request $request, Property $property)
 {
     if (auth()->id() !== $property->user_id) {
         abort(403, 'Unauthorized action.');
@@ -131,7 +135,7 @@ class PropertyController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:100',
-            'description' => 'required|string|max:2000',
+            'description' => 'required|string|max:5000', // Increased for HTML content
             'contact_number' => 'required|string|size:11',
             'available_for' => 'required|in:male,female,couples,any',
             'type' => 'required|in:bedspace,house,room,apartment',
@@ -141,13 +145,16 @@ class PropertyController extends Controller
             'images.*' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-
-        $validated['description'] = clean($request->description, [
-            'allowed_tags' => ['p', 'br', 'ul', 'ol', 'li', 'strong', 'em', 'h2', 'h3', 'h4'],
-            'allowed_attributes' => []
+        // Sanitize HTML from Summernote
+        $validated['description'] = Purifier::clean($request->description, [
+            'HTML.Allowed' => 'p,b,strong,i,em,u,ul,ol,li,br,h2,h3,h4',
+            'HTML.Nofollow' => true,
+            'HTML.TargetBlank' => true,
+            'AutoFormat.RemoveEmpty' => true,
         ]);
         
         $property->update($validated);
+
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -159,10 +166,9 @@ class PropertyController extends Controller
         }
 
         DB::commit();
-
         return redirect()
-        ->route('landlord.properties.show', $property)
-        ->with('success', 'Property updated successfully!');
+            ->route('landlord.properties.show', $property)
+            ->with('success', 'Property updated successfully!');
 
     } catch (\Exception $e) {
         DB::rollBack();
@@ -170,12 +176,12 @@ class PropertyController extends Controller
             'error' => $e->getMessage(),
             'property_id' => $property->id
         ]);
-
         return back()
             ->withInput()
-            ->with('error', 'Failed to update property: ' . $e->getMessage());
+            ->with('error', 'Failed to update property. Please try again.');
     }
 }
+
     public function destroy(Property $property)
     {
         if (auth()->id() !== $property->user_id) {

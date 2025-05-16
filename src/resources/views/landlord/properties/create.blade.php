@@ -4,8 +4,27 @@
 @section('dashboard-title', 'Landlord Portal')
 @section('page-title', 'Add New Property')
 @section('head')
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 @endsection
+
+<style>
+    .note-editor {
+        border-radius: 0.5rem !important;
+    }
+    .note-toolbar {
+        background-color: #f9fafb !important;
+        border-top-left-radius: 0.5rem !important;
+        border-top-right-radius: 0.5rem !important;
+    }
+    .note-btn {
+        background-color: white !important;
+        border-color: #e5e7eb !important;
+    }
+    .note-btn:hover {
+        background-color: #f3f4f6 !important;
+    }
+</style>
+
 @section('sidebar-menu')
     <a href="{{ route('landlord.dashboard') }}" 
        class="flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 
@@ -199,6 +218,7 @@
 </div>
 @endsection
 
+<!-- Description Summernote -->
 <div>
     <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
     <textarea id="description" 
@@ -210,31 +230,35 @@
 </div>
 
 @push('scripts')
-<script>
-    tinymce.init({
-        selector: '#description',
-        height: 300,
-        menubar: false,
-        plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
-            'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'wordcount'
-        ],
-        toolbar: 'undo redo | blocks | ' +
-            'bold italic | alignleft aligncenter alignright alignjustify | ' +
-            'bullist numlist outdent indent | removeformat',
-        content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }',
-        branding: false,
-        skin: "oxide",
-        promotion: false,
-        setup: function(editor) {
-            editor.on('keyup', function() {
-                // Optional: Add character limit
-                if (editor.getContent().length > 1000) {
-                    editor.setContent(editor.getContent().substr(0, 1000));
-                }
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Summernote JS -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#description').summernote({
+                height: 300,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['misc', ['undo', 'redo']]
+                ],
+                callbacks: {
+                    onKeyup: function(e) {
+                        var content = $(this).summernote('code');
+                        if (content.length > 1000) {
+                            $(this).summernote('code', content.substring(0, 1000));
+                        }
+                    }
+                },
+                placeholder: 'Write your property description here...',
+                tabsize: 2,
+                styleTags: ['p', 'h3', 'h4'],
+                disableDragAndDrop: true
             });
-        }
-    });
-</script>
+        });
+    </script>
 @endpush
